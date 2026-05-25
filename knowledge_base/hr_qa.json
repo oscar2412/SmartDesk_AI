@@ -1,0 +1,102 @@
+[
+{
+"question": "How many Casual Leave days do I get each year?",
+"answer": "Eligible full-time employees receive 8 Casual Leave days per calendar year. Casual Leave may be taken as a full day, half day, or hourly increment if approved by the manager and supported by the Leave Management System.",
+"category": "Casual Leave"
+},
+{
+"question": "How do I apply for Casual Leave?",
+"answer": "Log in to [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com) and select Apply for Leave. Choose Casual Leave, enter the requested date or date range, select the leave duration, enter a brief reason, confirm your balance, and submit the request.",
+"category": "Casual Leave"
+},
+{
+"question": "Can I carry forward unused Casual Leave into next year?",
+"answer": "No, unused Casual Leave does not carry forward to the next calendar year. It is also not paid out at year-end and cannot be converted into Earned Leave or transferred to another employee.",
+"category": "Casual Leave"
+},
+{
+"question": "How many Sick Leave days do I get per year?",
+"answer": "Eligible full-time employees receive 10 Sick Leave days per calendar year. Part-time employees may receive Sick Leave on a prorated basis based on their regular work schedule.",
+"category": "Sick Leave"
+},
+{
+"question": "What should I do if I need to call in sick?",
+"answer": "Notify your direct manager before your scheduled start time when possible. State that you are unable to work due to illness or medical reasons, provide the expected duration if known, and submit the Sick Leave request in [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com) as soon as you are able.",
+"category": "Sick Leave"
+},
+{
+"question": "What happens if I use all of my Sick Leave?",
+"answer": "If you use all available Sick Leave, HR will review available options. Depending on the situation, you may be able to use Earned Leave, Casual Leave if appropriate, unpaid leave, FMLA leave if eligible, short-term disability benefits if available, reasonable accommodation, or a modified work schedule if approved.",
+"category": "Sick Leave"
+},
+{
+"question": "How many Earned Leave days do I receive each year?",
+"answer": "Eligible full-time employees receive 15 Earned Leave days per calendar year. Earned Leave is separate from Casual Leave and Sick Leave.",
+"category": "Earned Leave"
+},
+{
+"question": "How does Earned Leave accrue each month?",
+"answer": "Full-time employees accrue 1.25 Earned Leave days per month, for a total of 15 days per year. Earned Leave begins accruing from the employee’s date of hire, and new hires accrue leave on a prorated basis for their first month depending on the start date.",
+"category": "Earned Leave"
+},
+{
+"question": "Can I carry forward unused Earned Leave?",
+"answer": "Employees may carry forward up to 10 unused Earned Leave days into the next calendar year. Any unused Earned Leave above 10 days at year-end may be forfeited unless HR approves an exception.",
+"category": "Earned Leave"
+},
+{
+"question": "Can I work from home, and who is eligible?",
+"answer": "Work from home eligibility depends on role, performance, work responsibilities, security needs, customer commitments, and manager approval. Employees may be eligible if their duties can be performed remotely, they have reliable internet, an appropriate work environment, and can protect company and customer information.",
+"category": "Work From Home"
+},
+{
+"question": "How many days per week can I work from home?",
+"answer": "The standard maximum work-from-home allowance is up to 2 days per week with manager approval. Exceptions may be approved by department leadership and HR.",
+"category": "Work From Home"
+},
+{
+"question": "How do I request a work-from-home day?",
+"answer": "Review your calendar and work responsibilities, then confirm no in-person meeting, customer event, or office duty requires your presence. Log in to [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com) or the HR Portal if WFH requests are managed there, select Work From Home Request, enter the requested date, confirm your work location and equipment, and submit the request.",
+"category": "Work From Home"
+},
+{
+"question": "How long is maternity leave and how much of it is paid?",
+"answer": "Eligible employees giving birth are entitled to 12 weeks of maternity leave. Roadmap Consulting provides 6 weeks of paid maternity leave, and the remaining approved time may be covered by Earned Leave, Sick Leave if medically appropriate, unpaid leave, short-term disability benefits if available, or FMLA if eligible.",
+"category": "Maternity Leave"
+},
+{
+"question": "How long is paternity leave and how much of it is paid?",
+"answer": "Eligible employees who are non-birthing parents are entitled to 4 weeks of paternity leave. Roadmap Consulting provides 2 weeks of paid paternity leave, and the remaining approved time may be covered by Earned Leave, unpaid leave, or FMLA if eligible.",
+"category": "Maternity Leave"
+},
+{
+"question": "How far in advance should I apply for maternity or paternity leave?",
+"answer": "Employees should provide at least 30 days of advance notice when the expected birth, adoption, or placement is foreseeable. For emergency or early delivery, employees should notify HR and their manager as soon as practical.",
+"category": "Maternity Leave"
+},
+{
+"question": "How many bereavement days do I get for an immediate family member?",
+"answer": "Employees are eligible for 5 paid workdays for the death of an immediate family member. Immediate family includes a spouse or domestic partner, child, parent, sibling, grandparent, grandchild, parent-in-law, legal guardian, or any person living in the employee’s household as an immediate family member.",
+"category": "Bereavement Leave"
+},
+{
+"question": "How many bereavement days do I get for extended family?",
+"answer": "Employees are eligible for 2 paid workdays for the death of an extended family member. Extended family may include an aunt, uncle, cousin, niece, nephew, brother-in-law, sister-in-law, or other close family relation not listed as immediate family.",
+"category": "Bereavement Leave"
+},
+{
+"question": "How many public holidays does Roadmap Consulting provide each year?",
+"answer": "Roadmap Consulting provides 10 paid public holidays per calendar year. The exact holidays may vary each year depending on the calendar and business needs.",
+"category": "Public Holidays"
+},
+{
+"question": "Where can I find the official holiday calendar?",
+"answer": "The official holiday calendar is published annually by HR. Employees can find it on the HR Portal at [https://hr.roadmapconsulting.com](https://hr.roadmapconsulting.com), in the Leave Management System at [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com), in company announcements, or in HR onboarding materials.",
+"category": "Public Holidays"
+},
+{
+"question": "What happens if my leave request is rejected?",
+"answer": "Review the reason provided in the Leave Management System and speak with your manager to understand the business concern. You can ask whether alternate dates are available, update and resubmit the request if appropriate, or contact HR if you believe the rejection was inconsistent with policy.",
+"category": "Leave Application"
+}
+] 

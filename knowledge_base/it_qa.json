@@ -1,0 +1,103 @@
+[
+    {
+    "question": "How do I reset my password if I forgot it?",
+    "answer": "Go to [https://passwords.roadmapconsulting.com](https://passwords.roadmapconsulting.com) and select Forgot Password or Reset Password. Enter your Roadmap Consulting username or work email address, complete the identity verification steps, and create a new password that meets the company requirements.",
+    "category": "Password Management"
+    },
+    {
+    "question": "What should I do if my account is locked?",
+    "answer": "Go to [https://passwords.roadmapconsulting.com](https://passwords.roadmapconsulting.com) and select Unlock Account. Enter your Roadmap Consulting username or work email address, complete the identity verification steps, and wait for confirmation that the account was unlocked.",
+    "category": "Password Management"
+    },
+    {
+    "question": "What are the password requirements for my Roadmap Consulting account?",
+    "answer": "Your password must be at least 12 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character. It must not contain your name, username, the company name, commonly used passwords, or recent passwords.",
+    "category": "Password Management"
+    },
+    {
+    "question": "How do I install the VPN client on my Windows 11 laptop?",
+    "answer": "Go to [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com), search for VPN Client for Windows 11, and download the approved Windows VPN installer. Open the installer from your Downloads folder, follow the prompts, restart if needed, then open the VPN client and add or select the Roadmap Consulting VPN profile.",
+    "category": "VPN Setup"
+    },
+    {
+    "question": "How do I install the VPN client on my Mac?",
+    "answer": "Go to [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com), search for VPN Client for Mac, and download the approved Mac VPN installer. Open the downloaded .pkg or .dmg file, follow the installation prompts, approve any required security permissions, and restart your Mac if required.",
+    "category": "VPN Setup"
+    },
+    {
+    "question": "What should I do if the VPN says my username or password is invalid?",
+    "answer": "Confirm that you are using your current Roadmap Consulting password and check that Caps Lock is not turned on. Try signing in to email or another company application, and if your password does not work there, reset it at [https://passwords.roadmapconsulting.com](https://passwords.roadmapconsulting.com).",
+    "category": "VPN Setup"
+    },
+    {
+    "question": "What is MFA and why do I need it?",
+    "answer": "Multi-Factor Authentication, or MFA, protects your account by requiring another verification step beyond your password. It is required because passwords can be stolen or guessed, and MFA helps prevent unauthorized access to company email and data.",
+    "category": "MFA Setup"
+    },
+    {
+    "question": "How do I set up MFA on my smartphone?",
+    "answer": "Sign in to your Roadmap Consulting account on your computer and choose Mobile Phone or Smartphone when prompted for MFA setup. Enter your mobile number if prompted, select your verification method, follow the instructions, and test MFA by signing out and signing back in.",
+    "category": "MFA Setup"
+    },
+    {
+    "question": "How do I set up MFA with an authenticator app?",
+    "answer": "Install the approved authenticator app on your smartphone and sign in to your Roadmap Consulting account on your computer. Choose Authenticator App, scan the QR code with your phone, approve the test notification or enter the code shown in the app, and confirm setup was successful.",
+    "category": "MFA Setup"
+    },
+    {
+    "question": "How do I add my work email to my iPhone?",
+    "answer": "Open Settings, go to Mail, tap Accounts, and select Add Account. Choose Microsoft Exchange or the approved company email option, enter your Roadmap Consulting email address and password, complete MFA, choose what to sync, and tap Save.",
+    "category": "Email Setup"
+    },
+    {
+    "question": "How do I add my work email to my Android phone?",
+    "answer": "Open the approved email app, such as Outlook or Gmail, and tap Add Account. Enter your Roadmap Consulting work email address, choose Microsoft 365, Exchange, or the approved company email option, enter your password, complete MFA, and confirm your inbox begins syncing.",
+    "category": "Email Setup"
+    },
+    {
+    "question": "What should I check if my mobile email is not syncing?",
+    "answer": "Confirm your phone has internet access, airplane mode is off, and your password has not recently changed. Manually refresh the inbox, confirm MFA is working, check that sync is enabled for your work account, restart your phone, and submit a ticket if the issue continues.",
+    "category": "Email Setup"
+    },
+    {
+    "question": "How do I request new software for my work computer?",
+    "answer": "Go to [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com), select Submit a Request, and choose Software Installation Request. Enter the software name, vendor website, business need, who needs the software, software type, required installation date, and manager approval if already obtained.",
+    "category": "Software Request"
+    },
+    {
+    "question": "How long does it usually take to get software approved?",
+    "answer": "Standard approved software typically takes 1 to 2 business days, while software requiring manager approval usually takes 2 to 5 business days. Paid software requiring purchasing review may take 5 to 10 business days, and security-sensitive software or new vendor reviews may take 10 business days or longer.",
+    "category": "Software Request"
+    },
+    {
+    "question": "Can I install software myself before IT approves it?",
+    "answer": "No, do not install unapproved software on Roadmap Consulting devices. All software must be reviewed and approved before installation to protect company systems and data.",
+    "category": "Software Request"
+    },
+    {
+    "question": "How do I connect to the office Wi-Fi?",
+    "answer": "Open Wi-Fi settings on your laptop or mobile device and select the Roadmap Consulting employee Wi-Fi network. Enter your Roadmap Consulting username and password if prompted, wait for the device to show Connected, then open a browser to confirm internet access.",
+    "category": "Wi-Fi Access"
+    },
+    {
+    "question": "What Wi-Fi should visitors use when they come to the office?",
+    "answer": "Visitors should use the Roadmap Consulting guest Wi-Fi network only. Employees should provide the current guest Wi-Fi instructions approved by IT or Reception and should never share their employee username or password.",
+    "category": "Wi-Fi Access"
+    },
+    {
+    "question": "What should I do if office Wi-Fi is not working?",
+    "answer": "Confirm Wi-Fi is turned on, airplane mode is off, and that you are connecting to the correct Wi-Fi network. Reconnect to Wi-Fi, restart your device, check whether others nearby are affected, and submit a ticket at [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com) if the issue continues.",
+    "category": "Wi-Fi Access"
+    },
+    {
+    "question": "What should I do if my laptop is running slowly?",
+    "answer": "Save your work, restart your laptop, close applications you are not using, and close unnecessary browser tabs. Confirm your laptop is plugged into power, your internet connection is stable, and submit a ticket if the laptop remains slow.",
+    "category": "Hardware Support"
+    },
+    {
+    "question": "How do I request a loaner device if my laptop is not working?",
+    "answer": "Submit a hardware issue ticket at [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com) and state that you need a loaner device. Explain the business impact, include your department, location, and availability for pickup or delivery, then wait for IT to confirm whether a loaner is available.",
+    "category": "Hardware Support"
+    }
+    ]
+    
