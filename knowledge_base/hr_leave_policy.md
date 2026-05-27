@@ -1105,10 +1105,7 @@ When in doubt, contact HR early. A timely question prevents confusion, protects 
 
 ## Topics Not Covered in This Document
 
-The following topics are intentionally outside the scope
-of this HR Leave Policy document. Employees with questions
-on these topics should contact HR directly at
-hr@roadmapconsulting.com or ext. 3030.
+The following topics are intentionally outside the scope of this HR Leave Policy document. Employees with questions on these topics should contact HR directly at hr@roadmapconsulting.com or ext. 3030.
 
 - Office parking allocation and permits
 - Cafeteria menu and meal allowances

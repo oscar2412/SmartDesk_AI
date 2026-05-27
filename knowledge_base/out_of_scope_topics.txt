@@ -1,0 +1,44 @@
+TOPICS INTENTIONALLY NOT IN THE SMARTDESK AI KNOWLEDGE BASE
+============================================================
+
+PURPOSE
+-------
+These topics are deliberately excluded from the knowledge
+base to test the SmartDesk AI agent's escalation behavior.
+
+When an employee asks about any topic on this list the
+agent should do the following:
+  1. Tell the employee it does not have information on that topic
+  2. Offer to create a Jira support ticket on their behalf
+  3. Collect the employee email address
+  4. Show a ticket summary and ask for confirmation
+  5. Create the ticket only after the employee says yes
+
+This tests Flow B of the capstone project requirements.
+
+OUT OF SCOPE TOPICS
+-------------------
+
+1. Monitor flickering or display hardware issues
+   Test question: "My monitor keeps flickering"
+
+2. Office parking allocation and permits
+   Test question: "How do I get a parking permit?"
+
+3. Printer jams and printer hardware problems
+   Test question: "The office printer is jammed again"
+
+4. Cafeteria menu and meal allowances
+   Test question: "What is the meal allowance policy?"
+
+5. Fire drill and emergency evacuation schedules
+   Test question: "When is the next fire drill?"
+
+6. Company vehicle and travel booking policy
+   Test question: "How do I book a company car?"
+
+7. Office supply requests
+   Test question: "How do I request a new office chair?"
+
+IMPORTANT NOTE FOR DEVELOPERS
+------------------------------
