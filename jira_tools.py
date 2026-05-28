@@ -218,6 +218,120 @@ def get_ticket_status(employee_email: str) -> dict:
         }
 
 
+# ── Function 3: Get Single Ticket By ID ─────────────────────────
+
+def get_ticket_by_id(ticket_id: str) -> dict:
+    """
+    Retrieves a single ticket by its Jira ticket ID.
+
+    Parameters:
+        ticket_id : the Jira ticket ID e.g. SSDAI-2
+
+    Returns a dictionary with:
+        status         : TICKETS_FOUND or TICKETS_FAILED
+        ticket_id      : the ticket ID
+        summary        : ticket title
+        status_name    : current status e.g. To Do In Progress Done
+        created        : date ticket was created
+        ticket_url     : direct link to the ticket
+        latest_comment : most recent comment if any
+        reason         : explanation of the result
+    """
+
+    try:
+        # Connect to Jira
+        jira = get_jira_client()
+
+        # Get the specific ticket
+        issue = jira.issue(
+            ticket_id,
+            fields="summary,status,created,comment"
+        )
+
+        # Get latest comment if any
+        latest_comment = ""
+        comments = issue.fields.comment.comments
+        if comments:
+            latest = comments[-1]
+            latest_comment = latest.body[:200]
+
+        return {
+            "status"        : TICKETS_FOUND,
+            "ticket_id"     : issue.key,
+            "summary"       : issue.fields.summary,
+            "status_name"   : issue.fields.status.name,
+            "created"       : str(issue.fields.created)[:10],
+            "ticket_url"    : f"{JIRA_SERVER}/browse/{issue.key}",
+            "latest_comment": latest_comment,
+            "reason"        : f"Ticket {issue.key} found successfully."
+        }
+
+    except JIRAError as e:
+        return {
+            "status"        : TICKETS_FAILED,
+            "ticket_id"     : ticket_id,
+            "summary"       : "",
+            "status_name"   : "",
+            "created"       : "",
+            "ticket_url"    : "",
+            "latest_comment": "",
+            "reason"        : f"Jira error: {e.status_code} - {e.text}"
+        }
+
+    except Exception as e:
+        return {
+            "status"        : TICKETS_FAILED,
+            "ticket_id"     : ticket_id,
+            "summary"       : "",
+            "status_name"   : "",
+            "created"       : "",
+            "ticket_url"    : "",
+            "latest_comment": "",
+            "reason"        : f"Unexpected error: {str(e)}"
+        }
+
+
+# ── Helper: Format Tickets for Display ───────────────────────────
+
+def format_tickets(tickets: list) -> str:
+    """
+    Formats a list of ticket dictionaries into a clean
+    readable string for display to the employee.
+
+    Example output:
+        🎫 SSDAI-2 : Monitor Flickering Issue
+        📊 Status  : In Progress
+        📅 Created : 2024-01-15
+        💬 Update  : Replacement monitor ordered...
+    """
+
+    if not tickets:
+        return "No tickets found."
+
+    lines = []
+    for ticket in tickets:
+        lines.append(
+            f"🎫 {ticket['ticket_id']} : {ticket['summary']}"
+        )
+        lines.append(
+            f"   📊 Status  : {ticket['status']}"
+        )
+        lines.append(
+            f"   📅 Created : {ticket['created']}"
+        )
+        if ticket.get("latest_comment"):
+            comment_preview = ticket["latest_comment"][:100]
+            lines.append(
+                f"   💬 Update  : {comment_preview}"
+            )
+        lines.append(
+            f"   🔗 Link    : {ticket['ticket_url']}"
+        )
+        lines.append("")
+
+    return "\n".join(lines)
+
+
 # ── Quick Self Test ──────────────────────────────────────────────
 # Only runs when you execute this file directly.
 # Does not run when imported by agent.py.
@@ -274,6 +388,26 @@ if __name__ == "__main__":
         print("create_ticket  : FAIL ❌")
         print(f"Reason  : {result['reason']}")
 
+# Part 8 Step 19 ──────────────────────────────────────────────
+    # Test the new get_ticket_by_id function
+    print()
+    print("Testing get_ticket_by_id function...")
+    print()
+
+    if result["status"] == TICKET_CREATED:
+        ticket_id = result["ticket_id"]
+        single_result = get_ticket_by_id(ticket_id)
+        print(f"Status     : {single_result['status']}")
+        print(f"Ticket ID  : {single_result['ticket_id']}")
+        print(f"Summary    : {single_result['summary']}")
+        print(f"Status     : {single_result['status_name']}")
+
+        if single_result["status"] == TICKETS_FOUND:
+            print("get_ticket_by_id : PASS ✅")
+        else:
+            print("get_ticket_by_id : FAIL ❌")
+
+# ──────────────────────────────────────────────
     print()
     print("=" * 60)
     print("Quick self test complete.")
