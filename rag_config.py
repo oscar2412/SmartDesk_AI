@@ -4,8 +4,10 @@
 # Change these values carefully — they affect answer quality.
 
 # ── Chunking Settings ───────────────────────────────────────────
-CHUNK_SIZE    = 1000   # Number of characters per chunk
-CHUNK_OVERLAP = 200    # Characters shared between chunks
+# CHUNK_SIZE    = 1000   # Number of characters per chunk
+# CHUNK_OVERLAP = 200    # Characters shared between chunks
+CHUNK_SIZE    = 800   # Number of characters per chunk
+CHUNK_OVERLAP = 150    # Characters shared between chunks
 
 # ── Retrieval Settings ──────────────────────────────────────────
 TOP_K_RESULTS = 3      # Number of chunks to retrieve per query
@@ -13,7 +15,8 @@ TOP_K_RESULTS = 3      # Number of chunks to retrieve per query
 # ── Confidence Threshold ────────────────────────────────────────
 # If the best match scores below this value the agent will
 # escalate to ticket creation instead of attempting an answer
-CONFIDENCE_THRESHOLD = 0.75
+#CONFIDENCE_THRESHOLD = 0.75
+CONFIDENCE_THRESHOLD = 0.15
 
 # ── Embedding Model ─────────────────────────────────────────────
 EMBEDDING_MODEL = "text-embedding-3-small"
