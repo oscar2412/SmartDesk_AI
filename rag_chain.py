@@ -160,3 +160,32 @@ if __name__ == "__main__":
     print(result['answer'])
     print("-" * 40)
     print()
+
+
+def format_sources(sources: list) -> str:
+    """
+    Formats a list of source file paths into a
+    clean readable string for display.
+
+    Example output:
+        Sources: IT Support Guide, HR Leave Policy
+    """
+    if not sources:
+        return ""
+
+    # Convert file paths to readable names
+    name_map = {
+        "knowledge_base/it_support_guide.md"        : "IT Support Guide",
+        "knowledge_base/hr_leave_policy.md"          : "HR Leave Policy",
+        "knowledge_base/it_qa.json"                  : "IT Q&A Database",
+        "knowledge_base/hr_qa.json"                  : "HR Q&A Database",
+        "knowledge_base/hr-policies-qa-dataset.jsonl": "HR Policies Dataset"
+    }
+
+    readable_names = []
+    for source in sources:
+        name = name_map.get(source, source)
+        if name not in readable_names:
+            readable_names.append(name)
+
+    return "Sources: " + ", ".join(readable_names)    
