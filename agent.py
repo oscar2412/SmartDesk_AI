@@ -16,6 +16,7 @@ import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
+from tokenizers.normalizers import Replace
 
 from rag_chain import (
     get_rag_answer,
@@ -213,6 +214,160 @@ def build_unclear_response() -> str:
     )
 
 
+
+def validate_message(message: str) -> dict:
+    """
+    Validates an incoming employee message before processing.
+    Returns a dictionary with:
+        valid   : True or False
+        reason  : why it failed validation if False
+        cleaned : the cleaned message string
+    """
+
+    # Check for None or non-string input
+    if not message or not isinstance(message, str):
+        return {
+            "valid"  : False,
+            "reason" : "empty",
+            "cleaned": ""
+        }
+
+    # Strip whitespace
+    cleaned = message.strip()
+
+    # Check for empty after stripping
+    if not cleaned:
+        return {
+            "valid"  : False,
+            "reason" : "empty",
+            "cleaned": ""
+        }
+
+    # Check for too short — single characters
+    if len(cleaned) < 2:
+        return {
+            "valid"  : False,
+            "reason" : "too_short",
+            "cleaned": cleaned
+        }
+
+    # Check for too long — over 1000 characters
+    if len(cleaned) > 1000:
+        return {
+            "valid"   : False,
+            "reason"  : "too_long",
+            "cleaned" : cleaned[:1000]
+        }
+
+    # Check for gibberish — no vowels in a long message
+    vowels = set("aeiouAEIOU")
+    words  = cleaned.split()
+    if len(words) > 3:
+        has_vowels = any(
+            any(c in vowels for c in word)
+            for word in words
+        )
+        if not has_vowels:
+            return {
+                "valid"  : False,
+                "reason" : "gibberish",
+                "cleaned": cleaned
+            }
+
+    # Message passed all checks
+    return {
+        "valid"  : True,
+        "reason" : "ok",
+        "cleaned": cleaned
+    }
+
+
+def get_validation_response(reason: str) -> str:
+    """
+    Returns an appropriate response based on why
+    the message failed validation.
+    """
+
+    responses = {
+        "empty": (
+            "It looks like you did not type anything.\n"
+            "Please type your question and I will be happy to help!"
+        ),
+        "too_short": (
+            "I need a bit more information to help you.\n"
+            "Could you please describe what you need?"
+        ),
+        "too_long": (
+            "Your message is quite long! I have read the "
+            "first part.\n"
+            "Could you summarise your question in one or "
+            "two sentences so I can help you better?"
+        ),
+        "gibberish": (
+            "I am not sure I understood that.\n\n"
+            "Could you please rephrase your question?\n\n"
+            "For example:\n"
+            "  'How do I reset my password?'\n"
+            "  'How many leave days do I get?'\n"
+            "  'What is the status of my ticket?'"
+        )
+    }
+
+    return responses.get(reason, build_unclear_response())
+
+
+def is_greeting(message: str) -> bool:
+    """
+    Detects if the employee message is a simple greeting
+    rather than a real question. Greetings should get a
+    friendly welcome response not an intent detection call.
+    """
+    greetings = [
+        "hi", "hello", "hey", "good morning", "good afternoon",
+        "good evening", "howdy", "greetings", "sup", "hiya",
+        "hi there", "hello there", "hey there"
+    ]
+    message_lower = message.lower().strip()
+    return message_lower in greetings
+
+
+def build_greeting_response() -> str:
+    """Returns a friendly response to a greeting."""
+    return (
+        "Hello! Great to hear from you.\n\n"
+        "I am SmartDesk AI, your IT and HR support assistant "
+        "at Roadmap Consulting.\n\n"
+        "How can I help you today? You can ask me about:\n"
+        "  IT support (passwords, VPN, MFA, email setup)\n"
+        "  HR policies (leave, WFH, reimbursement)\n"
+        "  Creating a support ticket\n"
+        "  Checking the status of your existing tickets"
+    )
+
+
+def is_thanks(message: str) -> bool:
+    """
+    Detects if the employee is just saying thank you.
+    Thanks messages should get a warm closing response.
+    """
+    thanks_words = [
+        "thanks", "thank you", "thank you so much",
+        "many thanks", "cheers", "appreciated",
+        "that helped", "that was helpful", "great thanks",
+        "ok thanks", "okay thanks"
+    ]
+    message_lower = message.lower().strip()
+    return any(t in message_lower for t in thanks_words)
+
+
+def build_thanks_response() -> str:
+    """Returns a warm response to a thank you message."""
+    return (
+        "You are very welcome! I am glad I could help.\n\n"
+        "Is there anything else I can assist you with today?"
+    )
+
+
 def ask_for_email() -> str:
     """Returns the email request message."""
     return (
@@ -225,16 +380,23 @@ def build_ticket_summary(query: str, email: str, category: str) -> str:
     """
     Builds a human readable ticket summary for confirmation.
     Called before asking the employee to confirm ticket creation.
+    This is the human-in-the-loop confirmation step required
+    by Section 2.2.2 of the capstone document.
     """
+    separator = "-" * 40
     return (
         f"I would like to create a support ticket for you.\n\n"
-        f"Here are the details:\n\n"
-        f"  Title    : {query[:80]}\n"
-        f"  Category : {category}\n"
-        f"  Email    : {email}\n\n"
+        f"Please review the details below:\n\n"
+        f"{separator}\n"
+        f"  📋 Title    : {query[:80]}\n"
+        f"  🏷  Category : {category}\n"
+        f"  📧 Email    : {email}\n"
+        f"  🤖 Created by: SmartDesk AI Agent\n"
+        f"{separator}\n\n"
         f"Shall I go ahead and create this ticket?\n"
-        f"Please type yes or no."
+        f"Type YES to confirm or NO to cancel."
     )
+
 
 
 def categorise_query(query: str) -> str:
@@ -274,7 +436,7 @@ def process_message(user_message: str, session: dict) -> str:
         A string response to send back to the employee
     """
 
-    # Clean up the input
+       # Clean up the input
     message = user_message.strip()
 
     # ── Handle empty messages ────────────────────────────────────
@@ -285,15 +447,36 @@ def process_message(user_message: str, session: dict) -> str:
     session["chat_history"].append(
         HumanMessage(content=message)
     )
+    
+    # ── Validate the message ─────────────────────────────────────
+    validation = validate_message(user_message)
+    if not validation["valid"]:
+        return get_validation_response(validation["reason"])
+
+    # Use the cleaned message from here on
+    message = validation["cleaned"]
+
+    # ── Handle greetings ─────────────────────────────────────────
+    if is_greeting(message):
+        return build_greeting_response()
+
+    # ── Handle thank you messages ────────────────────────────────
+    if is_thanks(message):
+        return build_thanks_response()
+
+    # ── Add message to chat history ──────────────────────────────
+    session["chat_history"].append(
+        HumanMessage(content=message)
+    )
+
 
     # ────────────────────────────────────────────────────────────
-    # SPECIAL STATE: Waiting for email address
+    # SPECIAL STATE 1: Waiting for email address
+    # This MUST come before intent detection
     # ────────────────────────────────────────────────────────────
     if session["awaiting_email"]:
-        # Treat this message as an email address
         email = message.strip().lower()
 
-        # Basic email validation
         if "@" not in email or "." not in email:
             return (
                 "That does not look like a valid email address. "
@@ -301,49 +484,80 @@ def process_message(user_message: str, session: dict) -> str:
                 "(for example: yourname@roadmapconsulting.com)"
             )
 
-        # Save the email to session
-        session["employee_email"]  = email
-        session["awaiting_email"]  = False
+        session["employee_email"] = email
+        session["awaiting_email"] = False
 
-        # Now decide what to do based on the last intent
         if session["last_intent"] == INTENT_CHECK_STATUS:
-            # They were asking for ticket status
             return handle_check_status(session)
-
         elif session["last_intent"] == INTENT_KB_QUERY:
-            # They were in the ticket creation flow
             return handle_ticket_creation_start(session)
-
         else:
             return handle_check_status(session)
 
     # ────────────────────────────────────────────────────────────
-    # SPECIAL STATE: Waiting for yes/no ticket confirmation
+    # SPECIAL STATE 2: Waiting for yes/no ticket confirmation
+    # This MUST come before intent detection
     # ────────────────────────────────────────────────────────────
     if session["awaiting_confirmation"]:
         response_lower = message.lower().strip()
 
-        if response_lower in ["yes", "y", "sure", "go ahead",
-                               "ok", "okay", "yep", "yeah"]:
+        # ── Employee said YES ────────────────────────────────────
+      # Split into words for exact whole-word matching
+        response_words = response_lower.split()
+        if any(word in response_words for word in [
+            "yes", "sure", "ok", "okay", "yep", "yeah",
+            "please", "confirm", "confirmed"
+        ]) or any(phrase in response_lower for phrase in [
+            "go ahead", "do it", "create it",
+            "sounds good", "correct"
+        ]):
             return handle_ticket_confirmed(session)
 
-        elif response_lower in ["no", "n", "cancel", "stop",
-                                  "nope", "nah", "dont", "don't"]:
+        # ── Employee said NO ─────────────────────────────────────
+        elif any(word in response_words for word in [
+            "no", "cancel", "stop", "nope", "nah",
+            "dont", "skip", "discard"
+        ]) or any(phrase in response_lower for phrase in [
+            "don't", "nevermind", "never mind",
+            "forget it", "not now"
+        ]):
             session["awaiting_confirmation"] = False
             session["pending_ticket"]        = None
             return (
                 "No problem! The ticket has not been created.\n\n"
                 "Is there anything else I can help you with?"
             )
+
+        # ── Employee wants to change the title ───────────────────
+        elif response_lower.startswith("change title"):
+            new_title = message[len("change title"):].strip()
+            if new_title and session["pending_ticket"]:
+                session["pending_ticket"]["summary"] = new_title[:80]
+                email    = session["employee_email"]
+                category = session["pending_ticket"]["category"]
+                return (
+                    f"Title updated! Here is the revised ticket:\n\n"
+                    + build_ticket_summary(new_title, email, category)
+                )
+            else:
+                return (
+                    "Please type the new title after 'change title'.\n"
+                    "For example: change title My laptop screen is broken"
+                )
+
+        # ── Employee typed something else ────────────────────────
         else:
             return (
-                "I did not quite catch that. "
-                "Please type yes to create the ticket "
-                "or no to cancel."
+                "I did not quite catch that.\n\n"
+                "Please type:\n"
+                "  YES to create the ticket\n"
+                "  NO to cancel\n"
+                "  CHANGE TITLE new title here — to update the title"
             )
 
     # ────────────────────────────────────────────────────────────
     # NORMAL FLOW: Detect intent and route
+    # Only reached when NOT in a special state
     # ────────────────────────────────────────────────────────────
     intent = detect_intent(message)
     session["last_intent"] = intent
@@ -355,9 +569,7 @@ def process_message(user_message: str, session: dict) -> str:
         return handle_kb_query(message, session)
 
     else:
-        # UNCLEAR intent
         return build_unclear_response()
-
 
 
 # ── Flow Handlers ────────────────────────────────────────────────
