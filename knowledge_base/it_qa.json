@@ -1,12 +1,12 @@
 [
     {
     "question": "How do I reset my password if I forgot it?",
-    "answer": "Go to [https://passwords.roadmapconsulting.com](https://passwords.roadmapconsulting.com) and select Forgot Password or Reset Password. Enter your Roadmap Consulting username or work email address, complete the identity verification steps, and create a new password that meets the company requirements.",
+    "answer": "Go to [https://passwords.roadmapconsulting.com] and select Forgot Password or Reset Password. Enter your Roadmap Consulting username or work email address, complete the identity verification steps, and create a new password that meets the company requirements.",
     "category": "Password Management"
     },
     {
     "question": "What should I do if my account is locked?",
-    "answer": "Go to [https://passwords.roadmapconsulting.com](https://passwords.roadmapconsulting.com) and select Unlock Account. Enter your Roadmap Consulting username or work email address, complete the identity verification steps, and wait for confirmation that the account was unlocked.",
+    "answer": "Go to [https://passwords.roadmapconsulting.com] and select Unlock Account. Enter your Roadmap Consulting username or work email address, complete the identity verification steps, and wait for confirmation that the account was unlocked.",
     "category": "Password Management"
     },
     {
@@ -16,12 +16,12 @@
     },
     {
     "question": "How do I install the VPN client on my Windows 11 laptop?",
-    "answer": "Go to [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com), search for VPN Client for Windows 11, and download the approved Windows VPN installer. Open the installer from your Downloads folder, follow the prompts, restart if needed, then open the VPN client and add or select the Roadmap Consulting VPN profile.",
+    "answer": "Go to [https://it.roadmapconsulting.com], search for VPN Client for Windows 11, and download the approved Windows VPN installer. Open the installer from your Downloads folder, follow the prompts, restart if needed, then open the VPN client and add or select the Roadmap Consulting VPN profile.",
     "category": "VPN Setup"
     },
     {
     "question": "How do I install the VPN client on my Mac?",
-    "answer": "Go to [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com), search for VPN Client for Mac, and download the approved Mac VPN installer. Open the downloaded .pkg or .dmg file, follow the installation prompts, approve any required security permissions, and restart your Mac if required.",
+    "answer": "Go to [https://it.roadmapconsulting.com], search for VPN Client for Mac, and download the approved Mac VPN installer. Open the downloaded .pkg or .dmg file, follow the installation prompts, approve any required security permissions, and restart your Mac if required.",
     "category": "VPN Setup"
     },
     {
@@ -61,7 +61,7 @@
     },
     {
     "question": "How do I request new software for my work computer?",
-    "answer": "Go to [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com), select Submit a Request, and choose Software Installation Request. Enter the software name, vendor website, business need, who needs the software, software type, required installation date, and manager approval if already obtained.",
+    "answer": "Go to [https://it.roadmapconsulting.com], select Submit a Request, and choose Software Installation Request. Enter the software name, vendor website, business need, who needs the software, software type, required installation date, and manager approval if already obtained.",
     "category": "Software Request"
     },
     {
@@ -96,7 +96,7 @@
     },
     {
     "question": "How do I request a loaner device if my laptop is not working?",
-    "answer": "Submit a hardware issue ticket at [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com) and state that you need a loaner device. Explain the business impact, include your department, location, and availability for pickup or delivery, then wait for IT to confirm whether a loaner is available.",
+    "answer": "Submit a hardware issue ticket at [https://it.roadmapconsulting.com] and state that you need a loaner device. Explain the business impact, include your department, location, and availability for pickup or delivery, then wait for IT to confirm whether a loaner is available.",
     "category": "Hardware Support"
     }
     ]

@@ -6,8 +6,8 @@
 **Audience:** All Roadmap Consulting employees
 **Policy Owner:** Human Resources
 **Effective Date:** Upon approval and publication
-**HR Portal:** [https://hr.roadmapconsulting.com](https://hr.roadmapconsulting.com)
-**Leave Management System:** [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com)
+**HR Portal:** [https://hr.roadmapconsulting.com]
+**Leave Management System:** [https://leaves.roadmapconsulting.com]
 
 ---
 
@@ -17,10 +17,10 @@ Employees should use the following official HR contact channels for questions ab
 
 | HR Support Need         | Contact Information                                                          |
 | ----------------------- | ---------------------------------------------------------------------------- |
-| HR Email                | [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com)                  |
-| HR Phone Extension      | ext. 3030                                                                    |
-| HR Portal               | [https://hr.roadmapconsulting.com](https://hr.roadmapconsulting.com)         |
-| Leave Management System | [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com) |
+| HR Email                | [hr@roadmapconsulting.com]                  |
+| HR Phone Extension      | ext. 2525                                                                    |
+| HR Portal               | [https://hr.roadmapconsulting.com]         |
+| Leave Management System | [https://leaves.roadmapconsulting.com] |
 
 ---
 
@@ -32,7 +32,7 @@ Roadmap Consulting is based in Texas. Texas generally does not require private e
 
 Eligible employees may also qualify for job-protected leave under the federal Family and Medical Leave Act, commonly called FMLA. Under the FMLA, eligible employees generally must have worked for a covered employer for at least 12 months, worked at least 1,250 hours during the 12 months before leave begins, and work at a location where the employer has at least 50 employees within 75 miles. ([DOL][2])
 
-For questions about legal eligibility, special medical situations, pregnancy-related needs, disability accommodation, or extended leave, contact HR at **[hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com)** or **ext. 3030**.
+For questions about legal eligibility, special medical situations, pregnancy-related needs, disability accommodation, or extended leave, contact HR at **[hr@roadmapconsulting.com]** or **ext. 2525**.
 
 ---
 
@@ -62,11 +62,11 @@ Part-time employees may receive Casual Leave on a prorated basis based on their 
 Employees should apply for Casual Leave through the Leave Management System.
 
 **Leave Management System:**
-[https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com)
+[https://leaves.roadmapconsulting.com]
 
 ### Steps
 
-1. Log in to [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com).
+1. Log in to [https://leaves.roadmapconsulting.com].
 2. Select **Apply for Leave**.
 3. Choose **Casual Leave** as the leave type.
 4. Enter the requested date or date range.
@@ -100,7 +100,7 @@ If the need is urgent and you cannot submit the request first:
 
 1. Notify your manager by phone, Teams, text, or email as soon as possible.
 2. Contact HR if you cannot reach your manager.
-3. Submit the leave request in [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com) as soon as you are able.
+3. Submit the leave request in [https://leaves.roadmapconsulting.com] as soon as you are able.
 4. Add a note explaining that the request was due to an urgent situation.
 
 ---
@@ -111,7 +111,7 @@ Casual Leave must be approved by the employee’s direct manager.
 
 ### Approval Process
 
-1. Employee submits the request in [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com).
+1. Employee submits the request in [https://leaves.roadmapconsulting.com].
 2. The direct manager receives the request.
 3. The manager reviews:
 
@@ -129,7 +129,7 @@ Casual Leave must be approved by the employee’s direct manager.
 * Primary approver: **Direct Manager**
 * Secondary approver, if manager is unavailable: **Department Head**
 * Policy or balance questions: **HR**
-* HR contact: **[hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com)** or **ext. 3030**
+* HR contact: **[hr@roadmapconsulting.com]** or **ext. 2525**
 
 ---
 
@@ -146,7 +146,7 @@ Casual Leave is intended to be used during the calendar year.
 
 ### Year-End Reminder
 
-Employees are encouraged to monitor their leave balance regularly in [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com) and plan responsibly.
+Employees are encouraged to monitor their leave balance regularly in [https://leaves.roadmapconsulting.com] and plan responsibly.
 
 ---
 
@@ -187,8 +187,8 @@ Employees should notify their manager as soon as they know they are unable to wo
 3. State that you are unable to work due to illness or medical reasons.
 4. Provide the expected duration of your absence, if known.
 5. Do not provide private medical details unless you choose to or HR specifically requests documentation.
-6. Submit the Sick Leave request in [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com) as soon as you are able.
-7. If you are unable to submit the request, contact HR at [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com) or ext. 3030.
+6. Submit the Sick Leave request in [https://leaves.roadmapconsulting.com] as soon as you are able.
+7. If you are unable to submit the request, contact HR at [hr@roadmapconsulting.com] or ext. 2525.
 8. Keep your manager updated if your expected return date changes.
 
 ---
@@ -236,7 +236,7 @@ Depending on the situation, the employee may be able to use:
 
 ### Steps
 
-1. Contact HR at [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com) before your Sick Leave balance reaches zero, if possible.
+1. Contact HR at [hr@roadmapconsulting.com] before your Sick Leave balance reaches zero, if possible.
 2. Explain the expected duration of the absence.
 3. Submit any required documentation.
 4. HR will review available leave balances and eligibility.
@@ -252,8 +252,8 @@ A long-term illness is generally an illness, injury, or medical condition expect
 ### Steps
 
 1. Notify your manager as soon as you know the absence may extend beyond 5 workdays.
-2. Contact HR at [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com) or ext. 3030.
-3. Submit a Sick Leave request in [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com).
+2. Contact HR at [hr@roadmapconsulting.com] or ext. 2525.
+3. Submit a Sick Leave request in [https://leaves.roadmapconsulting.com].
 4. HR may provide additional forms for medical leave review.
 5. Submit medical documentation by the requested deadline.
 6. HR will review whether FMLA, disability accommodation, unpaid leave, or other benefits may apply.
@@ -303,7 +303,7 @@ Full-time employees accrue:
 * New hires accrue leave on a prorated basis for their first month, depending on the start date.
 * Employees must be actively employed to accrue leave.
 * Leave does not accrue during extended unpaid leave unless required by law or approved by HR.
-* Leave balances are visible in [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com).
+* Leave balances are visible in [https://leaves.roadmapconsulting.com].
 
 ### Example
 
@@ -333,9 +333,9 @@ Earned Leave should be planned in advance whenever possible.
 ### Steps
 
 1. Review your project deadlines, customer commitments, and team calendar.
-2. Check your available Earned Leave balance at [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com).
+2. Check your available Earned Leave balance at [https://leaves.roadmapconsulting.com].
 3. Discuss timing with your manager if the leave is longer than 3 workdays.
-4. Log in to [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com).
+4. Log in to [https://leaves.roadmapconsulting.com].
 5. Select **Apply for Leave**.
 6. Choose **Earned Leave**.
 7. Enter the leave start date and end date.
@@ -658,7 +658,7 @@ Employees should provide advance notice whenever the need for parental leave is 
 ### Steps
 
 1. Notify your direct manager that you expect to request parental leave.
-2. Contact HR at [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com) or ext. 3030.
+2. Contact HR at [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com) or ext. 2525.
 3. Log in to [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com).
 4. Select the appropriate leave type:
 
@@ -999,7 +999,7 @@ Examples may include:
 1. Notify your manager as soon as safely possible.
 2. Use the fastest practical communication method.
 3. Provide a brief explanation and expected duration of absence.
-4. If you cannot reach your manager, contact HR at [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com) or ext. 3030.
+4. If you cannot reach your manager, contact HR at [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com) or ext. 2525.
 5. Submit the leave request in [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com) as soon as you are able.
 6. Select the most appropriate leave type.
 7. Add a note that the request is emergency-related.
@@ -1090,7 +1090,7 @@ Employees should provide only the information needed to support the leave reques
 For questions about this policy, leave balances, documentation, eligibility, or unusual circumstances, contact HR.
 
 * **HR Email:** [hr@roadmapconsulting.com](mailto:hr@roadmapconsulting.com)
-* **HR Phone Extension:** ext. 3030
+* **HR Phone Extension:** ext. 2525
 * **HR Portal:** [https://hr.roadmapconsulting.com](https://hr.roadmapconsulting.com)
 * **Leave Management System:** [https://leaves.roadmapconsulting.com](https://leaves.roadmapconsulting.com)
 
@@ -1105,7 +1105,7 @@ When in doubt, contact HR early. A timely question prevents confusion, protects 
 
 ## Topics Not Covered in This Document
 
-The following topics are intentionally outside the scope of this HR Leave Policy document. Employees with questions on these topics should contact HR directly at hr@roadmapconsulting.com or ext. 3030.
+The following topics are intentionally outside the scope of this HR Leave Policy document. Employees with questions on these topics should contact HR directly at hr@roadmapconsulting.com or ext. 2525.
 
 - Office parking allocation and permits
 - Cafeteria menu and meal allowances

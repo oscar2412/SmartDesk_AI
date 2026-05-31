@@ -1008,7 +1008,7 @@ Report broken or damaged equipment as soon as possible.
 
 ### Steps
 
-1. Go to the IT Portal: [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com).
+1. Go to the IT Portal: [https://it.roadmapconsulting.com].
 2. Select **Submit a Request**.
 3. Choose **Hardware Issue** or the closest available category.
 4. Describe the issue clearly.
@@ -1024,7 +1024,7 @@ Report broken or damaged equipment as soon as possible.
 ### If the Device Is Lost or Stolen
 
 1. Contact IT Support immediately at ext. 2026.
-2. Submit a ticket at [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com) as soon as possible.
+2. Submit a ticket at [https://it.roadmapconsulting.com] as soon as possible.
 3. Tell IT when and where the device was last seen.
 4. Tell IT whether the device had company email or files on it.
 5. Change your password if IT instructs you to do so.
@@ -1049,7 +1049,7 @@ Request a loaner if:
 
 ### Steps
 
-1. Submit a hardware issue ticket at [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com).
+1. Submit a hardware issue ticket at [https://it.roadmapconsulting.com].
 2. In the ticket, state that you need a loaner device.
 3. Explain the business impact.
 4. Include your department.
@@ -1080,9 +1080,9 @@ Employees using loaner devices must:
 
 | Issue                    | First Step                                                                             | Escalation                                                                            |
 | ------------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Forgotten password       | Use [https://passwords.roadmapconsulting.com](https://passwords.roadmapconsulting.com) | Contact IT at ext. 2026                                                               |
-| Locked account           | Use [https://passwords.roadmapconsulting.com](https://passwords.roadmapconsulting.com) | Email [it-support@roadmapconsulting.com](mailto:it-support@roadmapconsulting.com)     |
-| VPN not connecting       | Restart VPN client and verify internet                                                 | Submit ticket at [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com) |
+| Forgotten password       | Use [https://passwords.roadmapconsulting.com] | Contact IT at ext. 2026                                                               |
+| Locked account           | Use [https://passwords.roadmapconsulting.com] | Email [it-support@roadmapconsulting.com]     |
+| VPN not connecting       | Restart VPN client and verify internet                                                 | Submit ticket at [https://it.roadmapconsulting.com] |
 | Lost MFA device          | Contact IT immediately                                                                 | Call ext. 2026                                                                        |
 | Mobile email not syncing | Check internet, password, and sync settings                                            | Submit IT ticket                                                                      |
 | Need software installed  | Submit software request                                                                | Wait for approval                                                                     |
@@ -1127,7 +1127,7 @@ When in doubt, ask IT before taking action that could affect company systems or 
 
 For help, use one of the following approved support channels:
 
-* **IT Portal:** [https://it.roadmapconsulting.com](https://it.roadmapconsulting.com)
-* **IT Help Desk Email:** [it-support@roadmapconsulting.com](mailto:it-support@roadmapconsulting.com)
+* **IT Portal:** [https://it.roadmapconsulting.com]
+* **IT Help Desk Email:** [it-support@roadmapconsulting.com]
 * **IT Help Desk Phone Extension:** ext. 2026
-* **Self-Service Password Portal:** [https://passwords.roadmapconsulting.com](https://passwords.roadmapconsulting.com)
+* **Self-Service Password Portal:** [https://passwords.roadmapconsulting.com]
