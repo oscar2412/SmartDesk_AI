@@ -184,109 +184,405 @@ def detect_intent(message: str) -> str:
         return INTENT_KB_QUERY
 
 
-# ── Quick Self Test ──────────────────────────────────────────────
-# Only runs when you execute this file directly.
-# Tests the detect_intent function with 10 sample messages.
+
+# ── Response Helpers ─────────────────────────────────────────────
+
+def build_greeting() -> str:
+    """Returns the agent's opening greeting message."""
+    return (
+        "Hello! I am SmartDesk AI, your IT and HR support "
+        "assistant at Roadmap Consulting.\n\n"
+        "I can help you with:\n"
+        "  IT support questions (passwords, VPN, MFA, email)\n"
+        "  HR policy questions (leave, WFH, reimbursement)\n"
+        "  Creating support tickets for issues I cannot solve\n"
+        "  Checking the status of your existing tickets\n\n"
+        "How can I help you today?"
+    )
+
+
+def build_unclear_response() -> str:
+    """Returns a polite response for unclear messages."""
+    return (
+        "I am not sure I understood that. Could you please "
+        "rephrase your question?\n\n"
+        "For example you could ask me:\n"
+        "  'How do I reset my password?'\n"
+        "  'How many leave days do I get?'\n"
+        "  'What is the status of my ticket?'"
+    )
+
+
+def ask_for_email() -> str:
+    """Returns the email request message."""
+    return (
+        "Could you please share your work email address "
+        "so I can look that up for you?"
+    )
+
+
+def build_ticket_summary(query: str, email: str, category: str) -> str:
+    """
+    Builds a human readable ticket summary for confirmation.
+    Called before asking the employee to confirm ticket creation.
+    """
+    return (
+        f"I would like to create a support ticket for you.\n\n"
+        f"Here are the details:\n\n"
+        f"  Title    : {query[:80]}\n"
+        f"  Category : {category}\n"
+        f"  Email    : {email}\n\n"
+        f"Shall I go ahead and create this ticket?\n"
+        f"Please type yes or no."
+    )
+
+
+def categorise_query(query: str) -> str:
+    """
+    Determines the ticket category based on keywords
+    in the query. Returns IT Support or HR Support.
+    """
+    hr_keywords = [
+        "leave", "holiday", "vacation", "sick", "maternity",
+        "paternity", "wfh", "work from home", "reimbursement",
+        "salary", "payroll", "hr", "onboarding", "policy"
+    ]
+    query_lower = query.lower()
+    for keyword in hr_keywords:
+        if keyword in query_lower:
+            return "HR Support"
+    return "IT Support"
+
+
+# ── Core Agent Response Function ─────────────────────────────────
+
+def process_message(user_message: str, session: dict) -> str:
+    """
+    The heart of the agent. Takes a single employee message
+    and the current session state. Returns the agent response.
+
+    This function handles all three flows:
+      Flow A — KB answer
+      Flow B — Ticket creation with confirmation
+      Flow C — Ticket status check
+
+    Parameters:
+        user_message : the raw message from the employee
+        session      : the current session state dictionary
+
+    Returns:
+        A string response to send back to the employee
+    """
+
+    # Clean up the input
+    message = user_message.strip()
+
+    # ── Handle empty messages ────────────────────────────────────
+    if not message:
+        return "I did not catch that. Could you please type your question?"
+
+    # ── Add message to chat history ──────────────────────────────
+    session["chat_history"].append(
+        HumanMessage(content=message)
+    )
+
+    # ────────────────────────────────────────────────────────────
+    # SPECIAL STATE: Waiting for email address
+    # ────────────────────────────────────────────────────────────
+    if session["awaiting_email"]:
+        # Treat this message as an email address
+        email = message.strip().lower()
+
+        # Basic email validation
+        if "@" not in email or "." not in email:
+            return (
+                "That does not look like a valid email address. "
+                "Please enter your work email address "
+                "(for example: yourname@roadmapconsulting.com)"
+            )
+
+        # Save the email to session
+        session["employee_email"]  = email
+        session["awaiting_email"]  = False
+
+        # Now decide what to do based on the last intent
+        if session["last_intent"] == INTENT_CHECK_STATUS:
+            # They were asking for ticket status
+            return handle_check_status(session)
+
+        elif session["last_intent"] == INTENT_KB_QUERY:
+            # They were in the ticket creation flow
+            return handle_ticket_creation_start(session)
+
+        else:
+            return handle_check_status(session)
+
+    # ────────────────────────────────────────────────────────────
+    # SPECIAL STATE: Waiting for yes/no ticket confirmation
+    # ────────────────────────────────────────────────────────────
+    if session["awaiting_confirmation"]:
+        response_lower = message.lower().strip()
+
+        if response_lower in ["yes", "y", "sure", "go ahead",
+                               "ok", "okay", "yep", "yeah"]:
+            return handle_ticket_confirmed(session)
+
+        elif response_lower in ["no", "n", "cancel", "stop",
+                                  "nope", "nah", "dont", "don't"]:
+            session["awaiting_confirmation"] = False
+            session["pending_ticket"]        = None
+            return (
+                "No problem! The ticket has not been created.\n\n"
+                "Is there anything else I can help you with?"
+            )
+        else:
+            return (
+                "I did not quite catch that. "
+                "Please type yes to create the ticket "
+                "or no to cancel."
+            )
+
+    # ────────────────────────────────────────────────────────────
+    # NORMAL FLOW: Detect intent and route
+    # ────────────────────────────────────────────────────────────
+    intent = detect_intent(message)
+    session["last_intent"] = intent
+
+    if intent == INTENT_CHECK_STATUS:
+        return handle_check_status_intent(message, session)
+
+    elif intent == INTENT_KB_QUERY:
+        return handle_kb_query(message, session)
+
+    else:
+        # UNCLEAR intent
+        return build_unclear_response()
+
+
+
+# ── Flow Handlers ────────────────────────────────────────────────
+
+def handle_kb_query(message: str, session: dict) -> str:
+    """
+    Handles Flow A — Knowledge base query.
+    If RAG finds an answer returns it.
+    If not found escalates to Flow B ticket creation.
+    """
+
+    # Call the RAG chain
+    rag_result = get_rag_answer(
+        query        = message,
+        chat_history = session["chat_history"]
+    )
+
+    if rag_result["status"] == ANSWER_FOUND:
+        # Flow A — return the grounded answer
+        answer  = rag_result["answer"]
+        sources = format_sources(rag_result["sources"])
+        response = answer
+        if sources:
+            response += f"\n\n{sources}"
+        return response
+
+    else:
+        # Flow B — escalate to ticket creation
+        session["original_query"] = message
+        return handle_ticket_creation_start(session)
+
+
+def handle_ticket_creation_start(session: dict) -> str:
+    """
+    Starts the ticket creation flow.
+    Asks for email if not known then shows summary.
+    """
+
+    # Do we already have the email from earlier in this session?
+    if not session["employee_email"]:
+        session["awaiting_email"] = True
+        return (
+            "I am sorry I could not find information about that "
+            "in my knowledge base.\n\n"
+            "I can create a support ticket for the team to "
+            "look into this for you.\n\n"
+            + ask_for_email()
+        )
+
+    # We have the email — build and show the ticket summary
+    query    = session.get("original_query", "Support request")
+    email    = session["employee_email"]
+    category = categorise_query(query)
+
+    # Store the pending ticket details
+    session["pending_ticket"] = {
+        "summary"    : query[:80],
+        "description": (
+            f"Employee submitted this request via SmartDesk AI: "
+            f"{query}"
+        ),
+        "category"   : category,
+        "email"      : email
+    }
+
+    session["awaiting_confirmation"] = True
+    return build_ticket_summary(query, email, category)
+
+
+def handle_ticket_confirmed(session: dict) -> str:
+    """
+    Called when employee confirms ticket creation with yes.
+    Creates the ticket and returns the result.
+    """
+
+    session["awaiting_confirmation"] = False
+    ticket_data = session["pending_ticket"]
+
+    if not ticket_data:
+        return "Something went wrong. Please try again."
+
+    # Create the ticket in Jira
+    result = create_ticket(
+        employee_email = ticket_data["email"],
+        summary        = ticket_data["summary"],
+        description    = ticket_data["description"],
+        category       = ticket_data["category"]
+    )
+
+    # Clear the pending ticket
+    session["pending_ticket"] = None
+
+    if result["status"] == TICKET_CREATED:
+        return (
+            f"Your support ticket has been created successfully!\n\n"
+            f"  Ticket ID  : {result['ticket_id']}\n"
+            f"  Title      : {result['summary']}\n"
+            f"  URL        : {result['ticket_url']}\n\n"
+            f"The support team will review your ticket and "
+            f"get back to you shortly.\n\n"
+            f"Is there anything else I can help you with?"
+        )
+    else:
+        return (
+            "I am sorry — I was unable to create the ticket "
+            "right now. There may be a connection issue.\n\n"
+            f"Error details: {result['reason']}\n\n"
+            "Please try again in a moment or contact IT directly "
+            "at it-support@roadmapconsulting.com"
+        )
+
+
+def handle_check_status_intent(message: str, session: dict) -> str:
+    """
+    Entry point for Flow C — ticket status check.
+    Asks for email if not already known.
+    """
+
+    if not session["employee_email"]:
+        session["awaiting_email"] = True
+        return ask_for_email()
+
+    return handle_check_status(session)
+
+
+def handle_check_status(session: dict) -> str:
+    """
+    Performs the actual ticket status lookup
+    once we have the employee email.
+    """
+
+    email  = session["employee_email"]
+    result = get_ticket_status(email)
+
+    if result["status"] == TICKETS_FOUND:
+        count = result["count"]
+        tickets_text = format_tickets(result["tickets"])
+        return (
+            f"I found {count} ticket(s) for {email}:\n\n"
+            f"{tickets_text}"
+            f"Is there anything else I can help you with?"
+        )
+    else:
+        return (
+            f"I could not find any open tickets for {email}.\n\n"
+            "Would you like me to create a new support ticket?\n"
+            "If so please describe the issue and I will get "
+            "that set up for you."
+        )
+
+
+# ================================================================
+# ================================================================
+
+# ── Main Agent Runner ────────────────────────────────────────────
+# This runs when you type: python agent.py
+# It starts the interactive conversation loop.
 
 if __name__ == "__main__":
+
+    print()
     print("=" * 60)
-    print("SmartDesk AI — Intent Detection Test")
+    print("  SmartDesk AI — Intelligent IT & HR Operations Agent")
+    print("  Roadmap Consulting Internal Support")
     print("=" * 60)
     print()
-
-    test_cases = [
-        # KB_QUERY cases
-        {
-            "message"  : "How do I reset my password?",
-            "expected" : INTENT_KB_QUERY,
-            "label"    : "IT question"
-        },
-        {
-            "message"  : "How many casual leave days do I get?",
-            "expected" : INTENT_KB_QUERY,
-            "label"    : "HR question"
-        },
-        {
-            "message"  : "My laptop screen keeps flickering",
-            "expected" : INTENT_KB_QUERY,
-            "label"    : "IT problem report"
-        },
-        {
-            "message"  : "How do I set up VPN on my Windows laptop?",
-            "expected" : INTENT_KB_QUERY,
-            "label"    : "IT how-to"
-        },
-        {
-            "message"  : "The office printer on floor 3 is jammed",
-            "expected" : INTENT_KB_QUERY,
-            "label"    : "Out of scope escalation"
-        },
-        # CHECK_STATUS cases
-        {
-            "message"  : "What is the status of my ticket?",
-            "expected" : INTENT_CHECK_STATUS,
-            "label"    : "Direct status check"
-        },
-        {
-            "message"  : "Any updates on my issue?",
-            "expected" : INTENT_CHECK_STATUS,
-            "label"    : "Informal status check"
-        },
-        {
-            "message"  : "Has the IT team responded to my request yet?",
-            "expected" : INTENT_CHECK_STATUS,
-            "label"    : "Status check with context"
-        },
-        # UNCLEAR cases
-        {
-            "message"  : "Hello",
-            "expected" : INTENT_UNCLEAR,
-            "label"    : "Greeting"
-        },
-        {
-            "message"  : "Thanks",
-            "expected" : INTENT_UNCLEAR,
-            "label"    : "Acknowledgement"
-        },
-    ]
-
-    passed = 0
-    failed = 0
-
-    for i, test in enumerate(test_cases, 1):
-        print(f"Test {i:2d} — {test['label']}")
-        print(f"  Message  : {test['message']}")
-        print(f"  Expected : {test['expected']}")
-
-        result = detect_intent(test["message"])
-        print(f"  Got      : {result}")
-
-        if result == test["expected"]:
-            print(f"  Verdict  : PASS ✅")
-            passed += 1
-        else:
-            print(f"  Verdict  : FAIL ❌")
-            failed += 1
-
-        print()
-
-    print("=" * 60)
-    print("INTENT DETECTION TEST SUMMARY")
-    print("=" * 60)
-    print(f"  Tests passed : {passed} of {len(test_cases)}")
-    print(f"  Tests failed : {failed} of {len(test_cases)}")
+    print("Type your question and press Enter.")
+    print("Type 'quit' or 'exit' to end the session.")
+    print("Type 'new' to start a fresh conversation.")
+    print("-" * 60)
     print()
 
-    if failed == 0:
-        print("All tests passed! ✅")
-        print()
-        print("Intent detection is working correctly.")
-        print("Ready to build the full agent loop in Task 45.")
-    else:
-        print("Some tests failed.")
-        print("This is normal — GPT can sometimes classify")
-        print("borderline cases differently.")
-        print()
-        print("As long as 8 or more of 10 pass you are ready")
-        print("to continue to Task 45.")
+    # Start a fresh session
+    session = create_session()
+
+    # Print the greeting
+    print(f"SmartDesk : {build_greeting()}")
     print()
+
+    # Main conversation loop
+    while True:
+        try:
+            # Get employee input
+            user_input = input("You        : ").strip()
+
+            # Check for exit commands
+            if user_input.lower() in ["quit", "exit", "bye", "goodbye"]:
+                print()
+                print("SmartDesk : Thank you for using SmartDesk AI.")
+                print("           Have a great day!")
+                print()
+                break
+
+            # Check for new session command
+            if user_input.lower() in ["new", "restart", "reset"]:
+                session = create_session()
+                print()
+                print("SmartDesk : Starting a new conversation.")
+                print(f"           {build_greeting()}")
+                print()
+                continue
+
+            # Skip empty input
+            if not user_input:
+                continue
+
+            # Process the message and get response
+            print()
+            response = process_message(user_input, session)
+
+            # Print the agent response
+            print(f"SmartDesk : {response}")
+            print()
+
+        except KeyboardInterrupt:
+            print()
+            print()
+            print("SmartDesk : Session ended. Goodbye!")
+            print()
+            break
+
+        except Exception as e:
+            print()
+            print(f"SmartDesk : I encountered an unexpected error.")
+            print(f"           Please try again in a moment.")
+            print(f"           Error: {str(e)}")
+            print()
+
