@@ -9,6 +9,7 @@
 
 import os
 from dotenv import load_dotenv
+from langchain_core import chat_history
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from retrieval_with_threshold import (
@@ -57,7 +58,7 @@ CONTEXT:
 
 # ── Main RAG Function ────────────────────────────────────────────
 
-def get_rag_answer(query: str) -> dict:
+def get_rag_answer(query: str, chat_history: list = None) -> dict:
     """
     Main RAG function. Takes a query and returns a
     grounded answer from the knowledge base.
@@ -112,7 +113,11 @@ def get_rag_answer(query: str) -> dict:
         openai_api_key=os.getenv("OPENAI_API_KEY")
     )
 
-    response = llm.invoke([system_message, human_message])
+    messages = [system_message]
+    if chat_history:
+        messages.extend(chat_history)
+        messages.append(human_message)
+        response = llm.invoke(messages)
     answer = response.content.strip()
 
     # Step 6 — Check if GPT admitted it did not know
