@@ -1,5 +1,9 @@
 # SmartDesk AI — Agent Design Document
 
+## Flowchart
+
+![Agent Flowchart](agent_flowchart.png)
+
 ## Agent Overview
 
 SmartDesk AI is a conversational agent that handles
