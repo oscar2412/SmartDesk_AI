@@ -21,8 +21,8 @@ from rag_config import (
 load_dotenv()
 
 # ── Result Types ─────────────────────────────────────────────────
-RESULT_FOUND     = "FOUND"      # Good chunks found above threshold
-RESULT_NOT_FOUND = "NOT_FOUND"  # No chunks above threshold
+RESULT_FOUND     = "FOUND"
+RESULT_NOT_FOUND = "NOT_FOUND"
 
 # ── Connect to ChromaDB Once at Module Load ───────────────────────
 embeddings = OpenAIEmbeddings(
@@ -44,56 +44,67 @@ def retrieve_with_threshold(query: str) -> dict:
 
     Returns a dictionary with:
         status  : FOUND or NOT_FOUND
-        chunks  : list of relevant document chunks (if FOUND)
+        chunks  : list of relevant document chunks if FOUND
         scores  : list of similarity scores
         query   : the original query
         reason  : explanation of the result
     """
 
-    # Search ChromaDB for top K results with scores
-    results = db.similarity_search_with_score(
-        query,
-        k=TOP_K_RESULTS
-    )
+    try:
+        # Search ChromaDB for top K results with scores
+        results = db.similarity_search_with_score(
+            query,
+            k=TOP_K_RESULTS
+        )
 
-    if not results:
+        if not results:
+            return {
+                "status" : RESULT_NOT_FOUND,
+                "chunks" : [],
+                "scores" : [],
+                "query"  : query,
+                "reason" : "ChromaDB returned no results at all."
+            }
+
+        # Get the best score from the top result
+        best_score = 1 - results[0][1]
+
+        # Apply the confidence threshold check
+        if best_score < CONFIDENCE_THRESHOLD:
+            return {
+                "status" : RESULT_NOT_FOUND,
+                "chunks" : [],
+                "scores" : [round((1 - r[1]) * 100, 1) for r in results],
+                "query"  : query,
+                "reason" : (
+                    f"Best match score {round(best_score * 100, 1)}% "
+                    f"is below threshold of "
+                    f"{round(CONFIDENCE_THRESHOLD * 100, 1)}%."
+                )
+            }
+
+        # Threshold passed — return the relevant chunks
+        chunks = [doc for doc, score in results]
+        scores = [round((1 - score) * 100, 1) for doc, score in results]
+
+        return {
+            "status" : RESULT_FOUND,
+            "chunks" : chunks,
+            "scores" : scores,
+            "query"  : query,
+            "reason" : (
+                f"Best match score {round(best_score * 100, 1)}% "
+                f"is above threshold of "
+                f"{round(CONFIDENCE_THRESHOLD * 100, 1)}%."
+            )
+        }
+
+    except Exception as e:
+        # ChromaDB connection error or embedding failure
         return {
             "status" : RESULT_NOT_FOUND,
             "chunks" : [],
             "scores" : [],
             "query"  : query,
-            "reason" : "ChromaDB returned no results at all."
+            "reason" : f"ChromaDB error: {str(e)}"
         }
-
-    # Get the best score from the top result
-    best_score = 1 - results[0][1]  # Convert distance to similarity
-
-    # Apply the confidence threshold check
-    if best_score < CONFIDENCE_THRESHOLD:
-        return {
-            "status" : RESULT_NOT_FOUND,
-            "chunks" : [],
-            "scores" : [round((1 - r[1]) * 100, 1) for r in results],
-            "query"  : query,
-            "reason" : (
-                f"Best match score {round(best_score * 100, 1)}% "
-                f"is below threshold of "
-                f"{round(CONFIDENCE_THRESHOLD * 100, 1)}%."
-            )
-        }
-
-    # Threshold passed — return the relevant chunks
-    chunks = [doc for doc, score in results]
-    scores = [round((1 - score) * 100, 1) for doc, score in results]
-
-    return {
-        "status" : RESULT_FOUND,
-        "chunks" : chunks,
-        "scores" : scores,
-        "query"  : query,
-        "reason" : (
-            f"Best match score {round(best_score * 100, 1)}% "
-            f"is above threshold of "
-            f"{round(CONFIDENCE_THRESHOLD * 100, 1)}%."
-        )
-    }

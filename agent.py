@@ -202,6 +202,24 @@ def build_greeting() -> str:
     )
 
 
+def build_api_error_response(service: str = "the service") -> str:
+    """
+    Returns a polite error message when an API call fails.
+    Used when OpenAI or Jira is temporarily unavailable.
+
+    Parameters:
+        service : name of the service that failed
+    """
+    return (
+        f"I am sorry — I am having trouble connecting to "
+        f"{service} right now.\n\n"
+        f"This is usually a temporary issue. "
+        f"Please try again in a moment.\n\n"
+        f"If the problem continues please contact IT directly "
+        f"at it-support@roadmapconsulting.com or ext. 2020."
+    )
+
+
 def build_unclear_response() -> str:
     """Returns a polite response for unclear messages."""
     return (
@@ -559,47 +577,79 @@ def process_message(user_message: str, session: dict) -> str:
     # NORMAL FLOW: Detect intent and route
     # Only reached when NOT in a special state
     # ────────────────────────────────────────────────────────────
-    intent = detect_intent(message)
+    try:
+        intent = detect_intent(message)
+    except Exception as e:
+        print(f"  [Agent] Intent detection error: {str(e)}")
+        intent = INTENT_KB_QUERY
+
     session["last_intent"] = intent
 
-    if intent == INTENT_CHECK_STATUS:
-        return handle_check_status_intent(message, session)
+    try:
+        if intent == INTENT_CHECK_STATUS:
+            return handle_check_status_intent(message, session)
 
-    elif intent == INTENT_KB_QUERY:
-        return handle_kb_query(message, session)
+        elif intent == INTENT_KB_QUERY:
+            return handle_kb_query(message, session)
 
-    else:
-        return build_unclear_response()
+        else:
+            return build_unclear_response()
+
+    except Exception as e:
+        print(f"  [Agent] Flow handler error: {str(e)}")
+        return build_api_error_response("the service")
 
 
 # ── Flow Handlers ────────────────────────────────────────────────
+
+def build_api_error_response(service: str = "the service") -> str:
+    """
+    Returns a polite error message when an API call fails.
+    Used when OpenAI or Jira is temporarily unavailable.
+
+    Parameters:
+        service : name of the service that failed
+    """
+    return (
+        f"I am sorry — I am having trouble connecting to "
+        f"{service} right now.\n\n"
+        f"This is usually a temporary issue. "
+        f"Please try again in a moment.\n\n"
+        f"If the problem continues please contact IT directly "
+        f"at it-support@roadmapconsulting.com or ext. 2020."
+    )
+
 
 def handle_kb_query(message: str, session: dict) -> str:
     """
     Handles Flow A — Knowledge base query.
     If RAG finds an answer returns it.
     If not found escalates to Flow B ticket creation.
+    Includes full error handling for API failures.
     """
 
-    # Call the RAG chain
-    rag_result = get_rag_answer(
-        query        = message,
-        chat_history = session["chat_history"]
-    )
+    try:
+        # Call the RAG chain
+        rag_result = get_rag_answer(message)
 
-    if rag_result["status"] == ANSWER_FOUND:
-        # Flow A — return the grounded answer
-        answer  = rag_result["answer"]
-        sources = format_sources(rag_result["sources"])
-        response = answer
-        if sources:
-            response += f"\n\n{sources}"
-        return response
+        if rag_result["status"] == ANSWER_FOUND:
+            # Flow A — return the grounded answer
+            answer  = rag_result["answer"]
+            sources = format_sources(rag_result["sources"])
+            response = answer
+            if sources:
+                response += f"\n\n{sources}"
+            return response
 
-    else:
-        # Flow B — escalate to ticket creation
-        session["original_query"] = message
-        return handle_ticket_creation_start(session)
+        else:
+            # Flow B — escalate to ticket creation
+            session["original_query"] = message
+            return handle_ticket_creation_start(session)
+
+    except Exception as e:
+        # OpenAI or ChromaDB API failure
+        print(f"  [Agent] RAG error: {str(e)}")
+        return build_api_error_response("the knowledge base")
 
 
 def handle_ticket_creation_start(session: dict) -> str:
@@ -643,6 +693,7 @@ def handle_ticket_confirmed(session: dict) -> str:
     """
     Called when employee confirms ticket creation with yes.
     Creates the ticket and returns the result.
+    Includes full error handling for Jira API failures.
     """
 
     session["awaiting_confirmation"] = False
@@ -651,35 +702,42 @@ def handle_ticket_confirmed(session: dict) -> str:
     if not ticket_data:
         return "Something went wrong. Please try again."
 
-    # Create the ticket in Jira
-    result = create_ticket(
-        employee_email = ticket_data["email"],
-        summary        = ticket_data["summary"],
-        description    = ticket_data["description"],
-        category       = ticket_data["category"]
-    )
-
-    # Clear the pending ticket
-    session["pending_ticket"] = None
-
-    if result["status"] == TICKET_CREATED:
-        return (
-            f"Your support ticket has been created successfully!\n\n"
-            f"  Ticket ID  : {result['ticket_id']}\n"
-            f"  Title      : {result['summary']}\n"
-            f"  URL        : {result['ticket_url']}\n\n"
-            f"The support team will review your ticket and "
-            f"get back to you shortly.\n\n"
-            f"Is there anything else I can help you with?"
+    try:
+        # Create the ticket in Jira
+        result = create_ticket(
+            employee_email = ticket_data["email"],
+            summary        = ticket_data["summary"],
+            description    = ticket_data["description"],
+            category       = ticket_data["category"]
         )
-    else:
-        return (
-            "I am sorry — I was unable to create the ticket "
-            "right now. There may be a connection issue.\n\n"
-            f"Error details: {result['reason']}\n\n"
-            "Please try again in a moment or contact IT directly "
-            "at it-support@roadmapconsulting.com"
-        )
+
+        # Clear the pending ticket
+        session["pending_ticket"] = None
+
+        if result["status"] == TICKET_CREATED:
+            return (
+                f"Your support ticket has been created "
+                f"successfully!\n\n"
+                f"  Ticket ID  : {result['ticket_id']}\n"
+                f"  Title      : {result['summary']}\n"
+                f"  URL        : {result['ticket_url']}\n\n"
+                f"The support team will review your ticket and "
+                f"get back to you shortly.\n\n"
+                f"Is there anything else I can help you with?"
+            )
+        else:
+            return (
+                f"I was unable to create the ticket right now.\n\n"
+                f"Error: {result['reason']}\n\n"
+                f"Please try again or contact IT directly at\n"
+                f"it-support@roadmapconsulting.com or ext. 2020."
+            )
+
+    except Exception as e:
+        session["pending_ticket"] = None
+        print(f"  [Agent] Jira ticket creation error: {str(e)}")
+        return build_api_error_response("Jira")
+
 
 
 def handle_check_status_intent(message: str, session: dict) -> str:
@@ -699,26 +757,34 @@ def handle_check_status(session: dict) -> str:
     """
     Performs the actual ticket status lookup
     once we have the employee email.
+    Includes full error handling for Jira API failures.
     """
 
-    email  = session["employee_email"]
-    result = get_ticket_status(email)
+    email = session["employee_email"]
 
-    if result["status"] == TICKETS_FOUND:
-        count = result["count"]
-        tickets_text = format_tickets(result["tickets"])
-        return (
-            f"I found {count} ticket(s) for {email}:\n\n"
-            f"{tickets_text}"
-            f"Is there anything else I can help you with?"
-        )
-    else:
-        return (
-            f"I could not find any open tickets for {email}.\n\n"
-            "Would you like me to create a new support ticket?\n"
-            "If so please describe the issue and I will get "
-            "that set up for you."
-        )
+    try:
+        result = get_ticket_status(email)
+
+        if result["status"] == TICKETS_FOUND:
+            count        = result["count"]
+            tickets_text = format_tickets(result["tickets"])
+            return (
+                f"I found {count} ticket(s) for {email}:\n\n"
+                f"{tickets_text}"
+                f"Is there anything else I can help you with?"
+            )
+        else:
+            return (
+                f"I could not find any open tickets for "
+                f"{email}.\n\n"
+                f"Would you like me to create a new support "
+                f"ticket? If so please describe the issue."
+            )
+
+    except Exception as e:
+        print(f"  [Agent] Jira status lookup error: {str(e)}")
+        return build_api_error_response("Jira")
+
 
 
 # ================================================================
@@ -778,11 +844,20 @@ if __name__ == "__main__":
 
             # Process the message and get response
             print()
-            response = process_message(user_input, session)
+            try:
+                response = process_message(user_input, session)
+            except Exception as e:
+                response = (
+                    "I encountered an unexpected error. "
+                    "Please try again in a moment.\n"
+                    f"Error details: {str(e)}"
+                )
+                print(f"  [Agent] Unexpected error: {str(e)}")
 
             # Print the agent response
             print(f"SmartDesk : {response}")
             print()
+
 
         except KeyboardInterrupt:
             print()
