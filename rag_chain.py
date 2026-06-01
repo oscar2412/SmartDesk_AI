@@ -4,12 +4,11 @@
 # sends them to GPT with a strict system prompt, and returns
 # a grounded professional answer.
 #
-# This module is imported by agent.py in Task 45.
+# This module is imported by agent.py
 # ────────────────────────────────────────────────────────────────
 
 import os
 from dotenv import load_dotenv
-from langchain_core import chat_history
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from retrieval_with_threshold import (
@@ -23,9 +22,8 @@ from rag_config import LLM_MODEL
 load_dotenv()
 
 # ── Result Types ─────────────────────────────────────────────────
-ANSWER_FOUND     = "ANSWER_FOUND"      # Answer generated from KB
-ANSWER_NOT_FOUND = "ANSWER_NOT_FOUND"  # No answer — escalate
-
+ANSWER_FOUND     = "ANSWER_FOUND"
+ANSWER_NOT_FOUND = "ANSWER_NOT_FOUND"
 
 # ── System Prompt ────────────────────────────────────────────────
 # This is the instruction given to GPT before every query.
@@ -113,12 +111,27 @@ def get_rag_answer(query: str, chat_history: list = None) -> dict:
         openai_api_key=os.getenv("OPENAI_API_KEY")
     )
 
+    # Build message list including chat history if provided
     messages = [system_message]
     if chat_history:
         messages.extend(chat_history)
-        messages.append(human_message)
+    messages.append(human_message)
+
+    # Call GPT with error handling
+    try:
         response = llm.invoke(messages)
-    answer = response.content.strip()
+        answer = response.content.strip()
+    except Exception as e:
+        return {
+            "status" : ANSWER_NOT_FOUND,
+            "answer" : (
+                "I'm having trouble connecting right now. "
+                "Please try again in a moment."
+            ),
+            "query"  : query,
+            "sources": [],
+            "reason" : f"OpenAI API error: {str(e)}"
+        }
 
     # Step 6 — Check if GPT admitted it did not know
     not_found_phrase = "I don't have enough information"
@@ -141,31 +154,7 @@ def get_rag_answer(query: str, chat_history: list = None) -> dict:
     }
 
 
-# ── Quick Self Test ──────────────────────────────────────────────
-# Only runs when you execute this file directly.
-# Does not run when imported by agent.py.
-
-if __name__ == "__main__":
-    print("=" * 60)
-    print("RAG Chain Quick Test")
-    print("=" * 60)
-    print()
-
-    test_query = "How do I reset my password?"
-    print(f"Test query: {test_query}")
-    print()
-
-    result = get_rag_answer(test_query)
-
-    print(f"Status  : {result['status']}")
-    print(f"Sources : {result['sources']}")
-    print()
-    print("Answer:")
-    print("-" * 40)
-    print(result['answer'])
-    print("-" * 40)
-    print()
-
+# ── Format Sources Helper ────────────────────────────────────────
 
 def format_sources(sources: list) -> str:
     """
@@ -193,4 +182,31 @@ def format_sources(sources: list) -> str:
         if name not in readable_names:
             readable_names.append(name)
 
-    return "Sources: " + ", ".join(readable_names)    
+    return "Sources: " + ", ".join(readable_names)
+
+
+# ── Quick Self Test ──────────────────────────────────────────────
+# Only runs when you execute this file directly.
+# Does not run when imported by agent.py.
+
+if __name__ == "__main__":
+    print("=" * 60)
+    print("RAG Chain Quick Test")
+    print("=" * 60)
+    print()
+
+    test_query = "How do I reset my password?"
+    print(f"Test query: {test_query}")
+    print()
+
+    result = get_rag_answer(test_query)
+
+    print(f"Status         : {result['status']}")
+    print(f"Sources raw    : {result['sources']}")
+    print(f"Sources pretty : {format_sources(result['sources'])}")
+    print()
+    print("Answer:")
+    print("-" * 40)
+    print(result["answer"])
+    print("-" * 40)
+    print()

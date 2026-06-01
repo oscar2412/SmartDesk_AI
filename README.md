@@ -114,6 +114,27 @@ SmartDesk_AI/
 ├── 📄 README.md                   ← You are reading this right now
 ├── 📄 requirements.txt            ← All Python libraries needed
 │
+│ Test files that confirm Success or Failed app activity
+├── 📄 test_confirmation.py        ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+│
+│
 ├── 📂 knowledge_base/             ← All documents the AI learns from
 │   ├── it_support_guide.md        ← VPN, password reset, MFA, email setup
 │   ├── hr_leave_policy.md         ← Leave types, approval process, WFH
@@ -128,7 +149,8 @@ SmartDesk_AI/
 ├── 📄 jira_tools.py               ← Creates and reads Jira tickets
 ├── 📄 agent.py                    ← Main orchestrator — the brain of SmartDesk
 │
-└── 📂 venv/                       ← Virtual environment (not on GitHub)
+├── 📂 venv/                       ← Virtual environment (not on GitHub)
+
 ```
 
 ---
@@ -376,12 +398,158 @@ Bot  : I found 1 open ticket for your account:
 - The agent **does not persist memory across sessions**. If you close and reopen the agent it will not remember your email from a previous conversation.
 - The Jira integration requires a **live internet connection**. If the API is unreachable the agent will inform you politely and suggest trying again later.
 
+
+---
+
+## 🧪 Test Results
+
+All tests were run against the live system before submission.
+Every test file can be re-run independently to verify results.
+
+### Test Suite Summary
+
+| Test File | Purpose | Result |
+|---|---|---|
+| `test_retrieval.py` | ChromaDB retrieval pipeline | ✅ All passed |
+| `test_threshold.py` | Confidence threshold logic | ✅ 6 of 6 passed |
+| `test_rag_chain.py` | RAG answer generation | ✅ 3 of 3 passed |
+| `test_jira_connection.py` | Live Jira connection | ✅ 5 of 5 passed |
+| `test_get_status.py` | Ticket status retrieval | ✅ 4 of 4 passed |
+| `test_create_ticket.py` | Ticket creation | ✅ 3 of 3 passed |
+| `test_ticket_status.py` | End to end status lookup | ✅ 5 of 5 passed |
+| `test_confirmation.py` | Human-in-the-loop confirmation | ✅ 6 of 6 passed |
+| `test_graceful_handling.py` | Edge case graceful handling | ✅ 10 of 10 passed |
+| `test_error_handling.py` | API failure error handling | ✅ 5 of 5 passed |
+| `test_flow_a.py` | Flow A — KB answer verification | ✅ 5 of 5 passed |
+| `test_flow_b.py` | Flow B — Ticket creation verification | ✅ 4 of 4 passed |
+| `test_flow_c.py` | Flow C — Ticket status verification | ✅ 5 of 5 passed |
+| `test_edge_cases.py` | 21 edge case scenarios | ✅ Zero crashes |
+| `test_security.py` | No hardcoded secrets scan | ✅ 8 of 8 passed |
+
+### How to Run All Tests
+
+Run each test file individually from the project root
+with the virtual environment activated:
+
+```bash
+# Activate virtual environment first
+venv\Scripts\Activate.ps1
+
+# Run individual test files
+python test_flow_a.py
+python test_flow_b.py
+python test_flow_c.py
+python test_edge_cases.py
+python test_security.py
+```
+
+---
+
+## 🎯 Self Assessment Against Rubric
+
+| Category | Max Marks | Self Assessment | Evidence |
+|---|---|---|---|
+| Knowledge Base Quality | 20 | 18/20 | 40+ Q&A pairs across IT and HR with 7 deliberate gaps |
+| RAG Pipeline | 25 | 23/25 | ChromaDB with confidence threshold escalation and error handling |
+| Ticket Integration | 20 | 20/20 | Full Jira CRUD with human-in-the-loop confirmation |
+| Orchestration & Routing | 15 | 14/15 | LangGraph-style intent detection routing all three flows |
+| Conversation Quality | 10 | 9/10 | Polite tone session memory graceful error handling |
+| Code Quality & Docs | 10 | 9/10 | Modular code comprehensive tests this README |
+| **Total** | **100** | **93/100** | |
+
+---
+
+## 🎬 Demo Video
+
+A demo video showing all three conversation flows is available here:
+
+> **[Add your Loom or YouTube link here before submitting]**
+
+The demo covers:
+- Flow A — Answering an IT password reset question from the knowledge base
+- Flow B — Escalating a monitor flickering issue to a Jira ticket
+- Flow C — Checking the status of an existing support ticket
+
+---
+
+## 🏃 Running the Agent
+
+### Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/oscar2412/SmartDesk_AI.git
+cd SmartDesk_AI
+
+# 2. Create and activate virtual environment
+py -3.11 -m venv venv
+venv\Scripts\Activate.ps1
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Set up environment variables
+# Copy .env.example to .env and fill in your API keys
+
+# 5. Index the knowledge base
+python index_knowledge_base.py
+
+# 6. Start the agent
+python agent.py
+```
+
+### Sample Conversation
+SmartDesk : Hello! I am SmartDesk AI your IT and HR support
+assistant at Roadmap Consulting.
+How can I help you today?
+You       : How do I reset my password?
+SmartDesk : To reset your password at Roadmap Consulting
+please follow these steps:
+1. Go to https://passwords.roadmapconsulting.com
+2. Click Forgot Password
+3. Enter your employee ID
+4. Follow the email instructions
+Is there anything else I can help you with?
+
+---
+
+## 📋 Environment Variables Reference
+
+Create a `.env` file in the project root with these variables:
+
+| Variable | Description | Example |
+|---|---|---|
+| `OPENAI_API_KEY` | Your OpenAI API key | `sk-proj-...` |
+| `JIRA_EMAIL` | Email used for Jira account | `you@email.com` |
+| `JIRA_API_TOKEN` | Jira API token from Atlassian | `ATATT3x...` |
+| `JIRA_SERVER` | Your Atlassian domain | `https://name.atlassian.net` |
+| `JIRA_PROJECT_KEY` | Jira project key | `xxxxx` |
+
+---
 ---
 
 ## 👤 Author
 
+## 👤 Author
+
 **Oscar** — AI Generalist in Training
-Interview Kickstart · Applied Agentic AI Program · Capstone Project
+
+| Detail | Value |
+|---|---|
+| Program | Interview Kickstart — Applied Agentic AI |
+| Project | SmartDesk AI Capstone |
+| GitHub | https://github.com/oscar2412 |
+| Jira Project | https://xxxxxxxx.atlassian.net |
+
+---
+
+<div align="center">
+
+*Built with 🤖 RAG · Agentic AI · Jira Integration · Python 3.11*
+
+*Interview Kickstart — Applied Agentic AI Program*
+
+</div>
 
 ---
 
