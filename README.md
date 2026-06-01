@@ -67,6 +67,9 @@ Most IT and HR support teams are buried in repetitive questions — password res
 ## 🏗 Architecture Overview
 
 ```
+![SmartDesk AI System Architecture](architecture_diagram.png)
+
+### Component Flow
 ┌─────────────────────────────────────────────────────────────────┐
 │                        EMPLOYEE INPUT                           │
 │                   "How do I reset my VPN?"                      │
