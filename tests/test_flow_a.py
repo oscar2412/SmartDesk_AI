@@ -1,14 +1,9 @@
-# ── test_flow_a.py ───────────────────────────────────────────────
-# Official Flow A test scenario from the capstone document.
-# Tests that the agent correctly answers IT and HR questions
-# from the knowledge base without hallucinating or creating
-# unnecessary tickets.
-#
-# This is the test your evaluator will run to verify Flow A.
-# ────────────────────────────────────────────────────────────────
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-from agent import process_message, create_session, INTENT_KB_QUERY
-from rag_chain import get_rag_answer, ANSWER_FOUND
+from src.agents.agent import process_message, create_session, INTENT_KB_QUERY
+from src.rag.rag_chain import get_rag_answer, ANSWER_FOUND
 
 print("=" * 60)
 print("SmartDesk AI — Flow A Official Test")
@@ -21,10 +16,6 @@ print()
 
 passed = 0
 failed = 0
-
-# ── Flow A Test Questions ────────────────────────────────────────
-# These are real questions an employee would ask.
-# All of them should be answerable from your knowledge base.
 
 test_questions = [
     {
@@ -59,37 +50,29 @@ test_questions = [
     },
 ]
 
-# ── Run Each Test ────────────────────────────────────────────────
 for i, test in enumerate(test_questions, 1):
     print(f"TEST {i} — {test['topic']}")
     print(f"  Question : {test['question']}")
     print()
 
-    # Use a fresh session for each test
     session = create_session()
-
-    # Get the agent response
     response = process_message(test["question"], session)
     response_lower = response.lower()
 
-    # Check must_contain words
     contains_required = all(
         word in response_lower
         for word in test["must_contain"]
     )
 
-    # Check must_not_contain words
     no_bad_words = all(
         word not in response_lower
         for word in test["must_not_contain"]
     )
 
-    # Show response preview
     preview = response[:200].replace("\n", " ")
     print(f"  Response : {preview}...")
     print()
 
-    # Evaluate
     if contains_required and no_bad_words:
         print(f"  Contains required words : PASS ✅")
         print(f"  No escalation words     : PASS ✅")
@@ -97,17 +80,11 @@ for i, test in enumerate(test_questions, 1):
         passed += 1
     else:
         if not contains_required:
-            missing = [
-                w for w in test["must_contain"]
-                if w not in response_lower
-            ]
+            missing = [w for w in test["must_contain"] if w not in response_lower]
             print(f"  Contains required words : FAIL ❌")
             print(f"  Missing words           : {missing}")
         if not no_bad_words:
-            found_bad = [
-                w for w in test["must_not_contain"]
-                if w in response_lower
-            ]
+            found_bad = [w for w in test["must_not_contain"] if w in response_lower]
             print(f"  No escalation words     : FAIL ❌")
             print(f"  Found unwanted words    : {found_bad}")
         print(f"  TEST {i}                : FAIL ❌")
@@ -116,7 +93,6 @@ for i, test in enumerate(test_questions, 1):
     print("-" * 60)
     print()
 
-# ── Direct RAG Chain Check ───────────────────────────────────────
 print("BONUS CHECK — Direct RAG chain verification")
 print("Confirming RAG returns ANSWER_FOUND for KB questions")
 print()
@@ -141,7 +117,6 @@ print()
 print(f"  RAG direct checks : {rag_passed} of {len(rag_checks)} passed")
 print()
 
-# ── Final Summary ────────────────────────────────────────────────
 print("=" * 60)
 print("FLOW A TEST SUMMARY")
 print("=" * 60)
@@ -152,24 +127,8 @@ print()
 
 if failed == 0 and rag_passed == len(rag_checks):
     print("All Flow A tests passed! ✅")
-    print()
-    print("Your agent correctly answers knowledge base")
-    print("questions without hallucinating or escalating.")
-    print()
-    print("Flow A is verified and ready for your evaluator.")
-    print("Ready to move on to Task 50 — Flow B testing.")
 elif failed <= 1:
     print("Flow A is mostly working. ✅")
-    print()
-    print("Minor wording differences are acceptable.")
-    print("Check any FAIL results above to understand why.")
-    print("Ready to move on to Task 50.")
 else:
     print("Flow A needs attention.")
-    print()
-    print("Review the FAIL results above.")
-    print("Common fixes:")
-    print("  1. Re-run index_knowledge_base.py")
-    print("  2. Lower CONFIDENCE_THRESHOLD in rag_config.py")
-    print("  3. Check your knowledge base document content")
 print()
