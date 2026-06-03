@@ -233,7 +233,7 @@ Create your `.env` file using the template in the [Environment Variables](#-envi
 Place your documents in the `knowledge_base/` folder then run:
 
 ```bash
-python index_knowledge_base.py
+python -m src.data.index_knowledge_base   # index knowledge base
 ```
 
 This reads all your documents, creates embeddings, and stores them in ChromaDB. A `chroma_db/` folder will appear. ✅
@@ -241,7 +241,7 @@ This reads all your documents, creates embeddings, and stores them in ChromaDB. 
 ### Step 6 — Run the Agent
 
 ```bash
-python agent.py
+python -m src.agents.agent               # run the agent
 ```
 
 The agent will start in your terminal and wait for your first message. Type your question and press Enter.
@@ -439,12 +439,20 @@ with the virtual environment activated:
 venv\Scripts\Activate.ps1
 
 # Run individual test files
-python test_flow_a.py
-python test_flow_b.py
-python test_flow_c.py
-python test_edge_cases.py
-python test_security.py
-```
+python tests/test_flow_a.py            # run a test
+python tests/test_flow_b.py            # run b test
+python tests/test_flow_c.py            # run c test
+python tests/test_edge_cases.py        # run edge_cases
+python tests/test_security.py          # run security
+python tests/test_confirmation.py      # Pushed all modified and new files - agent phase complete
+python tests/test_create_ticket.py     # Added manual ticket creation test - all 3 tickets verified in Jira
+python tests/test_error_handling.py    # Added comprehensive error handling for all API failures - Section 4.3…
+python tests/test_get_status.py        # Added get_ticket_by_id and format_tickets functions - all status test…
+python tests/test_graceful_handling.py # Added graceful handling for edge cases greetings thanks and out of sc…
+python tests/test_jira_connection.py   # Pushed all modified and new files - agent phase complete
+python tests/test_rag_chain.py         # Added RAG chain answer function and comprehensive tests 2nd try
+python tests/test_retrieval.py         # Added retrieval test script - pipeline verified working
+python tests/test_ticket_status.py     # Pushed all modified and new files - agent phase complete
 
 ---
 
@@ -495,10 +503,10 @@ pip install -r requirements.txt
 # Copy .env.example to .env and fill in your API keys
 
 # 5. Index the knowledge base
-python index_knowledge_base.py
+python -m src.data.index_knowledge_base   # index knowledge base
 
 # 6. Start the agent
-python agent.py
+python -m src.agents.agent               # run the agent
 ```
 
 ### Sample Conversation
