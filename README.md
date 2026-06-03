@@ -112,49 +112,88 @@ Most IT and HR support teams are buried in repetitive questions — password res
 ```
 SmartDesk_AI/
 │
-├── 📄 .env                        ← Your secret API keys (NEVER on GitHub)
-├── 📄 .gitignore                  ← Protects secrets from GitHub
-├── 📄 README.md                   ← You are reading this right now
-├── 📄 requirements.txt            ← All Python libraries needed
+│
+├── 📂 src/                       ← Source environment
+│   ├── 📂 agents
+│   │   ├── 📄 __init__.py
+│   │   └──  📄 agent.py
+│   ├── 📂 core
+│   │   ├── 📄 __init__.py
+│   │   └── 📄 jira_tools.py
+│   ├── 📂 data
+│   │   ├── 📂 knowledge_base/        ← All documents the AI learns from
+│   │   │   ├── .gitkeep                      ← xxxxxxxxxxxxxxxxxxxxxxxxxx
+│   │   │   ├── hr-policies-qa-dataset.jsonl  ← xxxxxxxxxxxxxxxxxxxxxxxxxx
+│   │   │   ├── hr_leave_policy.md            ← Leave types, approval process, WFH
+│   │   │   ├── hr_qa.json                    ← HR question-answer pairs (15+ entries)
+│   │   │   ├── it_qa.json                    ← IT question-answer pairs (15+ entries)
+│   │   │   ├── it_support_guide.md           ← VPN, password reset, MFA, email setup
+│   │   │   └── out_of_scope_topics.txt       ← Deliberate gaps to test escalation
+│   │   ├── 📄 __init__.py
+│   │   └── 📄 index_knowledge_base.py
+│   ├── 📂 rag
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 rag_chain.py
+│   │   ├── 📄 rag_config.py
+│   │   └── 📄 retrieval_with_threshold.py
+│   ├── 📂 utils
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 company_profile.txt
+│   │   └── 📄 helpers.py
+│   ├── 📂 web_app
+│   │   └── 📄 __init__.py
+│   │   
+│   ├── 📂 workflow
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 flow_a.py
+│   │   ├── 📄 flow_b.py
+│   │   └── 📄 flow_c.py
+│   │
+│   └── 📄 __init__.py
+│   
 │
 │ Test files that confirm Success or Failed app activity
-├── 📄 test_confirmation.py        ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 test_.py                    ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+|
+├──📁 python tests/
+│   ├── 📄 test_confirmation.py      ← Pushed all modified and new files - agent phase complete
+│   ├── 📄 test_create_ticket.py     ← Added manual ticket creation test - all 3 tickets verified in Jira
+│   ├── 📄 test_edge_cases.py        ← Added edge case tests - agent robust with zero crashes
+│   ├── 📄 test_error_handling.py    ← Added comprehensive error handling for all API failures - Section 4.3…
+│   ├── 📄 test_flow_a.py            ← Updated README with test results self assessment, running instruction…
+│   ├── 📄 test_flow_b.py            ← Added Flow B official test - escalation and ticket creation verified
+│   ├── 📄 test_flow_c.py            ← Added Flow C official test - ticket status check verified
+│   ├── 📄 test_get_status.py        ← Added get_ticket_by_id and format_tickets functions - all status test…
+│   ├── 📄 test_graceful_handling.py ← Added graceful handling for edge cases greetings thanks and out of sc…
+│   ├── 📄 test_jira_connection.py   ← Pushed all modified and new files - agent phase complete
+│   ├── 📄 test_langgraph.py         ← Pushed all modified and new files - agent phase complete
+│   ├── 📄 test_rag_chain.py         ← Added RAG chain answer function and comprehensive tests 2nd try
+│   ├── 📄 test_retrieval.py         ← Added retrieval test script - pipeline verified working
+│   ├── 📄 test_ticket_status.py     ← Pushed all modified and new files - agent phase complete
+│   ├── 📄 test_security.py          ← Added security scan - no hardcoded secrets verified
+│   ├── 📄 test_threshold.py         ← Added confidence threshold logic and threshold tests
+│   ├── 📄 test_.py                  ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+│   └── 📄 test_.py                 ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 │
-│
-├── 📂 knowledge_base/             ← All documents the AI learns from
-│   ├── it_support_guide.md        ← VPN, password reset, MFA, email setup
-│   ├── hr_leave_policy.md         ← Leave types, approval process, WFH
-│   ├── it_qa.json                 ← IT question-answer pairs (15+ entries)
-│   ├── hr_qa.json                 ← HR question-answer pairs (15+ entries)
-│   └── out_of_scope_topics.txt    ← Deliberate gaps to test escalation
+├── 📄 .env.example                     ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 .gitignore                       ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 README.md                        ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 agent_design.md                  ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 agent_flowchart.jpg              ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 agent_flowchart.png              ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 architecture.md                  ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 architecture_diagram.drawio.png  ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 config.yaml                      ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 conftest.py                      ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 image.png                        ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 jira_test_screenshot.png         ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 requirements.txt                 ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 │
 ├── 📂 chroma_db/                  ← Vector database (auto-generated, not on GitHub)
 │
-├── 📄 index_knowledge_base.py     ← Loads documents into ChromaDB
-├── 📄 rag_chain.py                ← Retrieves context and generates answers
-├── 📄 jira_tools.py               ← Creates and reads Jira tickets
-├── 📄 agent.py                    ← Main orchestrator — the brain of SmartDesk
-│
 ├── 📂 venv/                       ← Virtual environment (not on GitHub)
+│
+├── 📂 env/                       ← Virtual environment (not on GitHub)
 
-```
 
 ---
 
@@ -162,10 +201,10 @@ SmartDesk_AI/
 
 Before running SmartDesk AI make sure you have all of the following:
 
-- **Python 3.11** installed — [Download here](https://python.org/downloads)
-- **Git** installed — [Download here](https://git-scm.com)
-- **VS Code** installed — [Download here](https://code.visualstudio.com)
-- **OpenAI account** with API key — [Sign up here](https://platform.openai.com)
+- **Python 3.11** installed                    — [Download here](https://python.org/downloads)
+- **Git** installed                            — [Download here](https://git-scm.com)
+- **VS Code** installed                        — [Download here](https://code.visualstudio.com)
+- **OpenAI account** with API key              — [Sign up here](https://platform.openai.com)
 - **Jira Cloud account** (free tier is enough) — [Sign up here](https://atlassian.com/jira)
 - **Jira API token** created in your Atlassian account settings
 
@@ -185,7 +224,7 @@ OPENAI_API_KEY=sk-proj-your-openai-key-here
 JIRA_EMAIL=your-jira-email@example.com
 JIRA_API_TOKEN=your-jira-api-token-here
 JIRA_SERVER=https://yourname.atlassian.net
-JIRA_PROJECT_KEY=SD
+JIRA_PROJECT_KEY=SSDAI
 ```
 
 > ⚠️ **Security Rule:** The `.gitignore` file already blocks `.env` from being uploaded to GitHub. Never remove `.env` from `.gitignore`.
@@ -272,7 +311,7 @@ The knowledge base is the foundation of SmartDesk AI. The better your documents,
 Use this prompt to generate IT documents:
 
 ```
-You are the IT Admin at AcmeCorp, a 300-employee company.
+You are the IT Admin at Roadmap Consulting, a 105-employee company.
 Write an internal guide covering: password reset steps,
 VPN setup for Windows and Mac, MFA setup, and email setup
 on mobile. Write in simple professional language for employees.
@@ -301,7 +340,7 @@ Download the Hugging Face HR dataset for breadth, then generate synthetic IT gui
 You  : Hi, how do I reset my password?
 
 Bot  : Hello! To reset your password, visit the Self-Service
-       Password Portal at https://passwords.acmecorp.com.
+       Password Portal at https://passwords.roadmapconsulting.com.
        Click "Forgot Password", enter your employee ID, and
        follow the instructions sent to your registered email.
        If you're locked out, contact IT at ext. 2020.
@@ -323,7 +362,7 @@ Bot  : I'm sorry to hear that. I don't have a troubleshooting
        guide for this specific issue. I can create a support
        ticket for the IT team. Could you share your email address?
 
-You  : jane.doe@acmecorp.com
+You  : jane.doe@roadmapconsulting.com
 
 Bot  : Thanks Jane! Here is the ticket I will create:
 
@@ -331,13 +370,13 @@ Bot  : Thanks Jane! Here is the ticket I will create:
        📝 Description : Employee reports monitor flickering
                         for the past two days.
        🏷  Category   : IT Hardware Support
-       📧 Email       : jane.doe@acmecorp.com
+       📧 Email       : jane.doe@roadmapconsulting.com
 
        Shall I go ahead and create this? (yes / no)
 
 You  : Yes please.
 
-Bot  : ✅ Done! Ticket SD-2847 has been created successfully.
+Bot  : ✅ Done! Ticket SSDAI-2847 has been created successfully.
        You can ask me for status updates anytime.
 ```
 
@@ -351,7 +390,7 @@ You  : Any updates on my monitor ticket?
 Bot  : Sure! Could you share your email address so I can
        look that up?
 
-You  : jane.doe@acmecorp.com
+You  : jane.doe@roadmapconsulting.com
 
 Bot  : I found 1 open ticket for your account:
 
@@ -369,15 +408,15 @@ Bot  : I found 1 open ticket for your account:
 
 | Layer | Technology | Purpose |
 |---|---|---|
-| **Language** | Python 3.11 | Core programming language |
-| **LLM** | OpenAI GPT-4 | Generates answers from context |
-| **Embeddings** | OpenAI text-embedding-3-small | Converts text to vectors |
-| **Vector Store** | ChromaDB | Stores and searches document chunks |
-| **RAG Framework** | LangChain | Wires retriever to LLM |
-| **Agent Orchestration** | LangGraph | Routes intents and manages flow |
-| **Ticketing** | Jira Cloud REST API | Creates and reads support tickets |
-| **Secret Management** | python-dotenv | Loads API keys from .env file |
-| **Version Control** | Git + GitHub | Code storage and submission |
+| **Language**               | Python 3.11                   | Core programming language           |
+| **LLM**                    | OpenAI GPT-4                  | Generates answers from context      |
+| **Embeddings**             | OpenAI text-embedding-3-small | Converts text to vectors            |
+| **Vector Store**           | ChromaDB                      | Stores and searches document chunks |
+| **RAG Framework**          | LangChain                     | Wires retriever to LLM              |
+| **Agent Orchestration**    | LangGraph                     | Routes intents and manages flow     |
+| **Ticketing**              | Jira Cloud REST API           | Creates and reads support tickets   |
+| **Secret Management**      | python-dotenv                 | Loads API keys from .env file       |
+| **Version Control**        | Git + GitHub                  | Code storage and submission         |
 
 ---
 
@@ -385,13 +424,13 @@ Bot  : I found 1 open ticket for your account:
 
 | Category | Marks | What Was Built |
 |---|---|---|
-| Knowledge Base Quality | 20 | 30–50 Q&A pairs across IT and HR with deliberate gaps |
-| RAG Pipeline | 25 | ChromaDB vector store with confidence threshold and escalation |
-| Ticket Integration | 20 | Jira create and status functions with human-in-the-loop |
-| Orchestration & Routing | 15 | LangGraph intent detection routing all three flows |
-| Conversation Quality | 10 | Polite tone, session memory, graceful error handling |
-| Code Quality & Docs | 10 | Modular code, this README, architecture diagram |
-| **Total** | **100** | |
+| Knowledge Base Quality  |    20 | 30–50 Q&A pairs across IT and HR with deliberate gaps |
+| RAG Pipeline            |    25 | ChromaDB vector store with confidence threshold and escalation |
+| Ticket Integration      |    20 | Jira create and status functions with human-in-the-loop |
+| Orchestration & Routing |    15 | LangGraph intent detection routing all three flows |
+| Conversation Quality    |    10 | Polite tone, session memory, graceful error handling |
+| Code Quality & Docs     |    10 | Modular code, this README, architecture diagram |
+| **Total**               | **100** | |
 
 ---
 
@@ -413,21 +452,23 @@ Every test file can be re-run independently to verify results.
 
 | Test File | Purpose | Result |
 |---|---|---|
-| `test_retrieval.py` | ChromaDB retrieval pipeline | ✅ All passed |
-| `test_threshold.py` | Confidence threshold logic | ✅ 6 of 6 passed |
-| `test_rag_chain.py` | RAG answer generation | ✅ 3 of 3 passed |
-| `test_jira_connection.py` | Live Jira connection | ✅ 5 of 5 passed |
-| `test_get_status.py` | Ticket status retrieval | ✅ 4 of 4 passed |
-| `test_create_ticket.py` | Ticket creation | ✅ 3 of 3 passed |
-| `test_ticket_status.py` | End to end status lookup | ✅ 5 of 5 passed |
-| `test_confirmation.py` | Human-in-the-loop confirmation | ✅ 6 of 6 passed |
-| `test_graceful_handling.py` | Edge case graceful handling | ✅ 10 of 10 passed |
-| `test_error_handling.py` | API failure error handling | ✅ 5 of 5 passed |
-| `test_flow_a.py` | Flow A — KB answer verification | ✅ 5 of 5 passed |
-| `test_flow_b.py` | Flow B — Ticket creation verification | ✅ 4 of 4 passed |
-| `test_flow_c.py` | Flow C — Ticket status verification | ✅ 5 of 5 passed |
-| `test_edge_cases.py` | 21 edge case scenarios | ✅ Zero crashes |
-| `test_security.py` | No hardcoded secrets scan | ✅ 8 of 8 passed |
+|`test_confirmation.py`       | Human-in-the-loop confirmation                 | ✅ 6 of 6 passed |
+|`test_create_ticket.py`      | Ticket creation                                | ✅ 3 of 3 passed |
+| `test_edge_cases.py`        | 21 edge case scenarios                         | ✅ Zero crashes |
+| `test_error_handling.py`    | API failure error handling                     | ✅ 5 of 5 passed |
+| `test_flow_a.py`            | Flow A — KB answer verification                | ✅ 5 of 5 passed |
+| `test_flow_b.py`            | Flow B — Ticket creation verification          | ✅ 4 of 4 passed |
+| `test_flow_c.py`            | Flow C — Ticket status verification            | ✅ 5 of 5 passed |
+| `test_get_status.py`        | Ticket status retrieval                        | ✅ 4 of 4 passed |
+| `test_graceful_handling.py` | Edge case graceful handling                    | ✅ 10 of 10 passed |
+| `test_jira_connection.py`   | Live Jira connection                           | ✅ 5 of 5 passed |
+| `test_jira_langgraph.py`    | Installed and all agent dependencies are ready | ✅ 5 of 5 passed |
+| `test_rag_chain.py`         | RAG answer generation                          | ✅ 3 of 3 passed |
+| `test_retrieval.py`         | ChromaDB retrieval pipeline                    | ✅ All passed |
+| `test_security.py`          | No hardcoded secrets scan                      | ✅ 8 of 8 passed |
+| `test_threshold.py`         | Confidence threshold logic                     | ✅ 6 of 6 passed |
+| `test_ticket_status.py`     | End to end status lookup                       | ✅ 5 of 5 passed |
+
 
 ### How to Run All Tests
 
@@ -439,20 +480,22 @@ with the virtual environment activated:
 venv\Scripts\Activate.ps1
 
 # Run individual test files
-python tests/test_flow_a.py            # run a test
-python tests/test_flow_b.py            # run b test
-python tests/test_flow_c.py            # run c test
-python tests/test_edge_cases.py        # run edge_cases
-python tests/test_security.py          # run security
 python tests/test_confirmation.py      # Pushed all modified and new files - agent phase complete
 python tests/test_create_ticket.py     # Added manual ticket creation test - all 3 tickets verified in Jira
+python tests/test_edge_cases.py        # Added edge case tests - agent robust with zero crashes
 python tests/test_error_handling.py    # Added comprehensive error handling for all API failures - Section 4.3…
+python tests/test_flow_a.py            # Updated README with test results self assessment, running instruction…
+python tests/test_flow_b.py            # Added Flow B official test - escalation and ticket creation verified
+python tests/test_flow_c.py            # Added Flow C official test - ticket status check verified
 python tests/test_get_status.py        # Added get_ticket_by_id and format_tickets functions - all status test…
 python tests/test_graceful_handling.py # Added graceful handling for edge cases greetings thanks and out of sc…
 python tests/test_jira_connection.py   # Pushed all modified and new files - agent phase complete
+python tests/test_langgraph.py         # Pushed all modified and new files - agent phase complete
 python tests/test_rag_chain.py         # Added RAG chain answer function and comprehensive tests 2nd try
 python tests/test_retrieval.py         # Added retrieval test script - pipeline verified working
 python tests/test_ticket_status.py     # Pushed all modified and new files - agent phase complete
+python tests/test_security.py          # Added security scan - no hardcoded secrets verified
+python tests/test_threshold.py         # Added confidence threshold logic and threshold tests
 
 ---
 
