@@ -1,0 +1,9 @@
+services:
+  smartdesk:
+    build: .
+    stdin_open: true
+    tty: true
+    env_file:
+      - .env
+    volumes:
+      - ./chroma_db:/app/chroma_db

@@ -163,7 +163,12 @@ embeddings = OpenAIEmbeddings(
 )
 
 if os.path.exists(CHROMA_DB_PATH):
-    shutil.rmtree(CHROMA_DB_PATH)
+    for _item in os.listdir(CHROMA_DB_PATH):
+        _item_path = os.path.join(CHROMA_DB_PATH, _item)
+        if os.path.isfile(_item_path) or os.path.islink(_item_path):
+            os.unlink(_item_path)
+        elif os.path.isdir(_item_path):
+            shutil.rmtree(_item_path)
     print("  Cleared existing ChromaDB database.")
 
 Chroma.from_documents(

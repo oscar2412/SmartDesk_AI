@@ -1,5 +1,6 @@
-# SmartDesk_AI
-SmartDesk AI - Intelligent IT and HR Operations Agent Capstone Project<div align="center">
+# SmartDesk AI
+
+<div align="center">
 
 ```
 ███████╗███╗   ███╗ █████╗ ██████╗ ████████╗██████╗ ███████╗███████╗██╗  ██╗
@@ -10,23 +11,25 @@ SmartDesk AI - Intelligent IT and HR Operations Agent Capstone Project<div align
 ╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝
 ```
 
-# 🤖 SmartDesk AI
+## 🤖 SmartDesk AI
+
 ### An Intelligent IT & HR Operations Agent
 
 ---
 
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
+[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_Store-FF6B35?style=for-the-badge)](https://chromadb.com)
 [![Jira](https://img.shields.io/badge/Jira-Integrated-0052CC?style=for-the-badge&logo=jira&logoColor=white)](https://atlassian.com/jira)
 [![LangChain](https://img.shields.io/badge/LangChain-RAG_Pipeline-1C3C3C?style=for-the-badge)](https://langchain.com)
+[![Docker](https://img.shields.io/badge/Docker-Containerised-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
 [![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge)](LICENSE)
 
 ---
 
 > *"Stop searching through wikis. Just ask SmartDesk."*
 
-**SmartDesk AI** is a production-style conversational agent that acts as a first-line IT and HR help desk for any organisation. It answers employee questions from a curated knowledge base, creates Jira support tickets when it cannot help, and lets employees check their ticket status — all in a single chat interface.
+**SmartDesk AI** is a production-style conversational agent that acts as a first-line IT and HR help desk for any organisation. It answers employee questions from a curated knowledge base, creates Jira support tickets when it cannot help, and lets employees check their ticket status — all through a single chat interface, deployable locally or via Docker.
 
 ---
 
@@ -39,12 +42,14 @@ SmartDesk AI - Intelligent IT and HR Operations Agent Capstone Project<div align
 - [Project Structure](#-project-structure)
 - [Prerequisites](#-prerequisites)
 - [Environment Variables](#-environment-variables)
-- [Setup Instructions](#-setup-instructions)
+- [Setup — Local (Python)](#-setup--local-python)
+- [Setup — Docker](#-setup--docker)
 - [Building the Knowledge Base](#-building-the-knowledge-base)
 - [Running the Agent](#-running-the-agent)
 - [Example Conversation Flows](#-example-conversation-flows)
+- [Test Suite](#-test-suite)
+- [Self Assessment](#-self-assessment-against-rubric)
 - [Technology Stack](#-technology-stack)
-- [Marking Scheme Alignment](#-marking-scheme-alignment)
 - [Known Limitations](#-known-limitations)
 - [Author](#-author)
 
@@ -58,7 +63,7 @@ Most IT and HR support teams are buried in repetitive questions — password res
 
 | Capability | What It Means | How It Works |
 |---|---|---|
-| 🔍 **Answer from Knowledge Base** | Instantly answers IT and HR questions | RAG pipeline searches ChromaDB vector store, GPT generates grounded answer |
+| 🔍 **Answer from Knowledge Base** | Instantly answers IT and HR questions | RAG pipeline searches ChromaDB, GPT generates a grounded answer |
 | 🎫 **Create a Support Ticket** | Opens a Jira ticket when it cannot answer | Collects employee info, confirms before submitting, returns ticket ID |
 | 📊 **Check Ticket Status** | Reports back on open tickets | Queries Jira API by employee email, displays status and team comments |
 
@@ -66,10 +71,9 @@ Most IT and HR support teams are buried in repetitive questions — password res
 
 ## 🏗 Architecture Overview
 
-```
-![SmartDesk AI System Architecture](architecture_diagram.png)
+![SmartDesk AI System Architecture](architecture_diagram.drawio.png)
 
-### Component Flow
+```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        EMPLOYEE INPUT                           │
 │                   "How do I reset my VPN?"                      │
@@ -78,25 +82,26 @@ Most IT and HR support teams are buried in repetitive questions — password res
                           ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                    INTENT DETECTOR                              │
-│           Classifies input as one of three flows:               │
-│    KB_QUERY  │  CREATE_TICKET  │  CHECK_STATUS                  │
-└──────┬───────────────┬─────────────────────┬────────────────────┘
-       │               │                     │
-       ▼               ▼                     ▼
-┌──────────┐   ┌───────────────┐   ┌─────────────────┐
-│   RAG    │   │    TICKET     │   │     TICKET      │
-│ PIPELINE │   │   CREATION    │   │  STATUS CHECK   │
-│          │   │               │   │                 │
-│ChromaDB  │   │ Collect Info  │   │  Lookup by      │
-│  Search  │   │    ↓          │   │  Employee Email │
-│    ↓     │   │ Show Summary  │   │     ↓           │
-│  OpenAI  │   │    ↓          │   │  Return Status  │
-│  Answer  │   │ Confirm Y/N   │   │  + Comments     │
-│          │   │    ↓          │   │                 │
-│          │   │ Create Ticket │   │                 │
-└──────────┘   └───────────────┘   └─────────────────┘
-       │               │                     │
-       └───────────────┴─────────────────────┘
+│           Classifies input as one of three flows                │
+│        KB_QUERY  │  CREATE_TICKET  │  CHECK_STATUS              │
+└──────┬───────────────────┬──────────────────────┬───────────────┘
+       │                   │                      │
+       ▼                   ▼                      ▼
+┌──────────────┐  ┌─────────────────┐  ┌──────────────────┐
+│  Flow A      │  │  Flow B         │  │  Flow C           │
+│  RAG         │  │  TICKET         │  │  STATUS CHECK     │
+│  PIPELINE    │  │  CREATION       │  │                   │
+│              │  │                 │  │  Lookup by        │
+│  ChromaDB    │  │  Collect Info   │  │  Employee Email   │
+│  Search      │  │      ↓          │  │       ↓           │
+│      ↓       │  │  Show Summary   │  │  Return Status    │
+│  GPT Answer  │  │      ↓          │  │  + Comments       │
+│              │  │  Confirm Y/N    │  │                   │
+│              │  │      ↓          │  │                   │
+│              │  │  Create Ticket  │  │                   │
+└──────────────┘  └─────────────────┘  └──────────────────┘
+       │                   │                      │
+       └───────────────────┴──────────────────────┘
                           │
                           ▼
 ┌─────────────────────────────────────────────────────────────────┐
@@ -112,109 +117,104 @@ Most IT and HR support teams are buried in repetitive questions — password res
 ```
 SmartDesk_AI/
 │
-│
-├── 📂 src/                       ← Source environment
-│   ├── 📂 agents
-│   │   ├── 📄 __init__.py
-│   │   └──  📄 agent.py
-│   ├── 📂 core
-│   │   ├── 📄 __init__.py
-│   │   └── 📄 jira_tools.py
-│   ├── 📂 data
-│   │   ├── 📂 knowledge_base/        ← All documents the AI learns from
-│   │   │   ├── .gitkeep                      ← xxxxxxxxxxxxxxxxxxxxxxxxxx
-│   │   │   ├── hr-policies-qa-dataset.jsonl  ← xxxxxxxxxxxxxxxxxxxxxxxxxx
-│   │   │   ├── hr_leave_policy.md            ← Leave types, approval process, WFH
-│   │   │   ├── hr_qa.json                    ← HR question-answer pairs (15+ entries)
-│   │   │   ├── it_qa.json                    ← IT question-answer pairs (15+ entries)
-│   │   │   ├── it_support_guide.md           ← VPN, password reset, MFA, email setup
-│   │   │   └── out_of_scope_topics.txt       ← Deliberate gaps to test escalation
-│   │   ├── 📄 __init__.py
-│   │   └── 📄 index_knowledge_base.py
-│   ├── 📂 rag
-│   │   ├── 📄 __init__.py
-│   │   ├── 📄 rag_chain.py
-│   │   ├── 📄 rag_config.py
-│   │   └── 📄 retrieval_with_threshold.py
-│   ├── 📂 utils
-│   │   ├── 📄 __init__.py
-│   │   ├── 📄 company_profile.txt
-│   │   └── 📄 helpers.py
-│   ├── 📂 web_app
-│   │   └── 📄 __init__.py
-│   │   
-│   ├── 📂 workflow
-│   │   ├── 📄 __init__.py
-│   │   ├── 📄 flow_a.py
-│   │   ├── 📄 flow_b.py
-│   │   └── 📄 flow_c.py
+├── 📂 src/                             ← All application source code
+│   ├── 📄 __init__.py
 │   │
-│   └── 📄 __init__.py
-│   
+│   ├── 📂 agents/                      ← Orchestration layer
+│   │   ├── 📄 __init__.py
+│   │   └── 📄 agent.py                 ← Main agent: intent detection, session management, routing
+│   │
+│   ├── 📂 core/                        ← External integrations
+│   │   ├── 📄 __init__.py
+│   │   └── 📄 jira_tools.py            ← Jira API: create tickets, lookup status, format output
+│   │
+│   ├── 📂 data/                        ← Knowledge base and indexing
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 index_knowledge_base.py  ← Reads KB files, chunks, embeds, stores in ChromaDB
+│   │   └── 📂 knowledge_base/
+│   │       ├── 📄 it_support_guide.md           ← VPN, password reset, MFA, email setup
+│   │       ├── 📄 hr_leave_policy.md            ← Leave types, WFH policy, approval process
+│   │       ├── 📄 it_qa.json                    ← 20 IT question-answer pairs
+│   │       ├── 📄 hr_qa.json                    ← 20 HR question-answer pairs
+│   │       ├── 📄 hr-policies-qa-dataset.jsonl  ← Extended HR dataset for broader coverage
+│   │       ├── 📄 out_of_scope_topics.txt        ← Deliberate gaps to test ticket escalation
+│   │       └── 📄 .gitkeep                      ← Ensures directory is tracked by Git
+│   │
+│   ├── 📂 rag/                         ← Retrieval-Augmented Generation pipeline
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 rag_chain.py             ← RAG answer generation using retrieved context
+│   │   ├── 📄 rag_config.py            ← Loads RAG settings from config.yaml
+│   │   └── 📄 retrieval_with_threshold.py ← ChromaDB vector search with confidence threshold
+│   │
+│   ├── 📂 utils/                       ← Shared helper functions
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 helpers.py               ← Response builders, validation, greetings, categorisation
+│   │   └── 📄 company_profile.txt      ← Roadmap Consulting contact info and portal URLs
+│   │
+│   ├── 📂 web_app/                     ← Reserved for future web UI (Streamlit or Flask)
+│   │   └── 📄 __init__.py
+│   │
+│   └── 📂 workflow/                    ← Isolated conversation flow handlers
+│       ├── 📄 __init__.py
+│       ├── 📄 flow_a.py                ← Flow A: answer from knowledge base via RAG
+│       ├── 📄 flow_b.py                ← Flow B: ticket creation with human-in-the-loop
+│       └── 📄 flow_c.py               ← Flow C: ticket status lookup via Jira
 │
-│ Test files that confirm Success or Failed app activity
-|
-├──📁 python tests/
-│   ├── 📄 test_confirmation.py      ← Pushed all modified and new files - agent phase complete
-│   ├── 📄 test_create_ticket.py     ← Added manual ticket creation test - all 3 tickets verified in Jira
-│   ├── 📄 test_edge_cases.py        ← Added edge case tests - agent robust with zero crashes
-│   ├── 📄 test_error_handling.py    ← Added comprehensive error handling for all API failures - Section 4.3…
-│   ├── 📄 test_flow_a.py            ← Updated README with test results self assessment, running instruction…
-│   ├── 📄 test_flow_b.py            ← Added Flow B official test - escalation and ticket creation verified
-│   ├── 📄 test_flow_c.py            ← Added Flow C official test - ticket status check verified
-│   ├── 📄 test_get_status.py        ← Added get_ticket_by_id and format_tickets functions - all status test…
-│   ├── 📄 test_graceful_handling.py ← Added graceful handling for edge cases greetings thanks and out of sc…
-│   ├── 📄 test_jira_connection.py   ← Pushed all modified and new files - agent phase complete
-│   ├── 📄 test_langgraph.py         ← Pushed all modified and new files - agent phase complete
-│   ├── 📄 test_rag_chain.py         ← Added RAG chain answer function and comprehensive tests 2nd try
-│   ├── 📄 test_retrieval.py         ← Added retrieval test script - pipeline verified working
-│   ├── 📄 test_ticket_status.py     ← Pushed all modified and new files - agent phase complete
-│   ├── 📄 test_security.py          ← Added security scan - no hardcoded secrets verified
-│   ├── 📄 test_threshold.py         ← Added confidence threshold logic and threshold tests
-│   ├── 📄 test_.py                  ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-│   └── 📄 test_.py                 ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📂 tests/                           ← Full test suite (16 files)
+│   ├── 📄 test_confirmation.py         ← Human-in-the-loop yes/no confirmation logic
+│   ├── 📄 test_create_ticket.py        ← End-to-end Jira ticket creation
+│   ├── 📄 test_edge_cases.py           ← 21 boundary and unexpected input scenarios
+│   ├── 📄 test_error_handling.py       ← API failure graceful degradation
+│   ├── 📄 test_flow_a.py              ← Official Flow A: KB answer verification
+│   ├── 📄 test_flow_b.py              ← Official Flow B: escalation and ticket creation
+│   ├── 📄 test_flow_c.py              ← Official Flow C: ticket status check
+│   ├── 📄 test_get_status.py           ← Jira status retrieval functions
+│   ├── 📄 test_graceful_handling.py    ← Graceful handling of greetings, thanks, off-topic
+│   ├── 📄 test_jira_connection.py      ← Live Jira API connectivity verification
+│   ├── 📄 test_langgraph.py            ← LangGraph installation and dependency check
+│   ├── 📄 test_rag_chain.py            ← RAG answer generation quality
+│   ├── 📄 test_retrieval.py            ← ChromaDB retrieval pipeline
+│   ├── 📄 test_security.py             ← Hardcoded secrets scan across all files
+│   ├── 📄 test_threshold.py            ← Confidence threshold in/out-of-scope logic
+│   └── 📄 test_ticket_status.py        ← End-to-end ticket status lookup
 │
-├── 📄 .env.example                     ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 .gitignore                       ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 README.md                        ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 agent_design.md                  ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 agent_flowchart.jpg              ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 agent_flowchart.png              ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 architecture.md                  ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 architecture_diagram.drawio.png  ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 config.yaml                      ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 conftest.py                      ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 image.png                        ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 jira_test_screenshot.png         ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-├── 📄 requirements.txt                 ← xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+├── 📄 Dockerfile                       ← Container build instructions for Docker deployment
+├── 📄 docker-compose.yml               ← Docker service config: env vars, volumes, TTY
+├── 📄 .dockerignore                    ← Excludes venv, chroma_db, .env from Docker build
+├── 📄 config.yaml                      ← Central RAG configuration: models, thresholds, paths
+├── 📄 conftest.py                      ← Adds project root to sys.path for pytest discovery
+├── 📄 requirements.txt                 ← All Python dependencies with pinned versions
+├── 📄 .env.example                     ← Template showing all required environment variables
+├── 📄 .gitignore                       ← Excludes venv, chroma_db, .env from version control
+├── 📄 agent_design.md                  ← Design decisions and agent architecture notes
+├── 📄 architecture.md                  ← Detailed system architecture documentation
+├── 📄 architecture_diagram.drawio.png  ← System architecture diagram
+├── 📄 agent_flowchart.png              ← Visual flowchart of all three conversation flows
 │
-├── 📂 chroma_db/                  ← Vector database (auto-generated, not on GitHub)
-│
-├── 📂 venv/                       ← Virtual environment (not on GitHub)
-│
-├── 📂 env/                       ← Virtual environment (not on GitHub)
-
+├── 📂 chroma_db/                       ← Vector database — auto-generated, not in GitHub
+└── 📂 venv/                            ← Virtual environment — not in GitHub
+```
 
 ---
 
 ## ✅ Prerequisites
 
-Before running SmartDesk AI make sure you have all of the following:
-
-- **Python 3.11** installed                    — [Download here](https://python.org/downloads)
-- **Git** installed                            — [Download here](https://git-scm.com)
-- **VS Code** installed                        — [Download here](https://code.visualstudio.com)
-- **OpenAI account** with API key              — [Sign up here](https://platform.openai.com)
-- **Jira Cloud account** (free tier is enough) — [Sign up here](https://atlassian.com/jira)
-- **Jira API token** created in your Atlassian account settings
+| Requirement | Version | Link |
+|---|---|---|
+| Python | 3.11+ | [python.org/downloads](https://python.org/downloads) |
+| Git | Any | [git-scm.com](https://git-scm.com) |
+| VS Code | Any | [code.visualstudio.com](https://code.visualstudio.com) |
+| Docker Desktop | Any | [docker.com/products/docker-desktop](https://docker.com/products/docker-desktop) |
+| OpenAI account + API key | — | [platform.openai.com](https://platform.openai.com) |
+| Jira Cloud account + API token | Free tier | [atlassian.com/jira](https://atlassian.com/jira) |
 
 ---
 
 ## 🔐 Environment Variables
 
-SmartDesk AI uses a `.env` file to store all secrets. **Never hard-code these in your Python files.**
+SmartDesk AI loads all secrets from a `.env` file. **Never hard-code credentials in Python files.**
 
-Create a file named `.env` in the root of your project folder and add the following:
+Create `.env` in the project root:
 
 ```env
 # ── OpenAI ──────────────────────────────────────────
@@ -227,308 +227,13 @@ JIRA_SERVER=https://yourname.atlassian.net
 JIRA_PROJECT_KEY=SSDAI
 ```
 
-> ⚠️ **Security Rule:** The `.gitignore` file already blocks `.env` from being uploaded to GitHub. Never remove `.env` from `.gitignore`.
+> ⚠️ `.env` is already listed in `.gitignore`. It will never be uploaded to GitHub.
 
 ---
 
-## 🚀 Setup Instructions
+## 🐍 Setup — Local (Python)
 
-Follow these steps **in order** from a fresh clone of this repository.
-
-### Step 1 — Clone the Repository
-
-```bash
-git clone https://github.com/YourUsername/SmartDesk_AI.git
-cd SmartDesk_AI
-```
-
-### Step 2 — Create and Activate Virtual Environment
-
-```bash
-# Create the virtual environment
-py -3.11 -m venv venv
-
-# Activate it (Windows)
-venv\Scripts\Activate.ps1
-
-# Activate it (Mac/Linux)
-source venv/bin/activate
-```
-
-You should see **(venv)** appear on the left of your terminal line. ✅
-
-### Step 3 — Install All Required Libraries
-
-```bash
-pip install -r requirements.txt
-```
-
-### Step 4 — Add Your API Keys
-
-Create your `.env` file using the template in the [Environment Variables](#-environment-variables) section above.
-
-### Step 5 — Build the Knowledge Base
-
-Place your documents in the `knowledge_base/` folder then run:
-
-```bash
-python -m src.data.index_knowledge_base   # index knowledge base
-```
-
-This reads all your documents, creates embeddings, and stores them in ChromaDB. A `chroma_db/` folder will appear. ✅
-
-### Step 6 — Run the Agent
-
-```bash
-python -m src.agents.agent               # run the agent
-```
-
-The agent will start in your terminal and wait for your first message. Type your question and press Enter.
-
----
-
-## 📚 Building the Knowledge Base
-
-The knowledge base is the foundation of SmartDesk AI. The better your documents, the better your agent performs.
-
-### Minimum Requirements
-
-| Requirement | Target |
-|---|---|
-| Total question-answer pairs | At least 30–50 |
-| IT support topics covered | Password reset, VPN, MFA, email setup |
-| HR topics covered | Leave policy, WFH, onboarding, reimbursement |
-| Deliberate gaps included | At least 5 unanswerable topics |
-
-### Option A — Download Ready-Made Datasets
-
-- **HR Policies:** [huggingface.co/datasets?search=hr+pol](https://huggingface.co/datasets?sort=trending&search=hr+pol)
-- **IT Support Tickets:** [huggingface.co/datasets?search=it+tick](https://huggingface.co/datasets?sort=trending&search=it+tick)
-- **Recommended starter:** `strova-ai/hr-policies-qa-dataset` on Hugging Face
-
-### Option B — Generate With ChatGPT
-
-Use this prompt to generate IT documents:
-
-```
-You are the IT Admin at Roadmap Consulting, a 105-employee company.
-Write an internal guide covering: password reset steps,
-VPN setup for Windows and Mac, MFA setup, and email setup
-on mobile. Write in simple professional language for employees.
-```
-
-Use this prompt to generate HR documents:
-
-```
-You are the HR Manager at AcmeCorp. Write a Leave Policy
-covering casual leave, sick leave, earned leave, and work
-from home policy. Include how to apply and approval steps.
-Keep it simple and professional.
-```
-
-### Option C — Combine Both (Recommended ⭐)
-
-Download the Hugging Face HR dataset for breadth, then generate synthetic IT guides for depth. This is the fastest path to a high-quality knowledge base.
-
----
-
-## 💬 Example Conversation Flows
-
-### Flow A — Question Answered from Knowledge Base
-
-```
-You  : Hi, how do I reset my password?
-
-Bot  : Hello! To reset your password, visit the Self-Service
-       Password Portal at https://passwords.roadmapconsulting.com.
-       Click "Forgot Password", enter your employee ID, and
-       follow the instructions sent to your registered email.
-       If you're locked out, contact IT at ext. 2020.
-       Is there anything else I can help you with?
-
-You  : No, thanks!
-
-Bot  : You're welcome! Have a great day. 😊
-```
-
----
-
-### Flow B — Question Escalated to Ticket Creation
-
-```
-You  : My monitor has been flickering for two days.
-
-Bot  : I'm sorry to hear that. I don't have a troubleshooting
-       guide for this specific issue. I can create a support
-       ticket for the IT team. Could you share your email address?
-
-You  : jane.doe@roadmapconsulting.com
-
-Bot  : Thanks Jane! Here is the ticket I will create:
-
-       📋 Title       : Monitor Flickering Issue
-       📝 Description : Employee reports monitor flickering
-                        for the past two days.
-       🏷  Category   : IT Hardware Support
-       📧 Email       : jane.doe@roadmapconsulting.com
-
-       Shall I go ahead and create this? (yes / no)
-
-You  : Yes please.
-
-Bot  : ✅ Done! Ticket SSDAI-2847 has been created successfully.
-       You can ask me for status updates anytime.
-```
-
----
-
-### Flow C — Ticket Status Check
-
-```
-You  : Any updates on my monitor ticket?
-
-Bot  : Sure! Could you share your email address so I can
-       look that up?
-
-You  : jane.doe@roadmapconsulting.com
-
-Bot  : I found 1 open ticket for your account:
-
-       🎫 SD-2847 : Monitor Flickering Issue
-       📊 Status  : In Progress
-       💬 Update  : "Replacement monitor ordered,
-                     delivery expected by Thursday."
-
-       Is there anything else I can help you with?
-```
-
----
-
-## 🛠 Technology Stack
-
-| Layer | Technology | Purpose |
-|---|---|---|
-| **Language**               | Python 3.11                   | Core programming language           |
-| **LLM**                    | OpenAI GPT-4                  | Generates answers from context      |
-| **Embeddings**             | OpenAI text-embedding-3-small | Converts text to vectors            |
-| **Vector Store**           | ChromaDB                      | Stores and searches document chunks |
-| **RAG Framework**          | LangChain                     | Wires retriever to LLM              |
-| **Agent Orchestration**    | LangGraph                     | Routes intents and manages flow     |
-| **Ticketing**              | Jira Cloud REST API           | Creates and reads support tickets   |
-| **Secret Management**      | python-dotenv                 | Loads API keys from .env file       |
-| **Version Control**        | Git + GitHub                  | Code storage and submission         |
-
----
-
-## 📊 Marking Scheme Alignment
-
-| Category | Marks | What Was Built |
-|---|---|---|
-| Knowledge Base Quality  |    20 | 30–50 Q&A pairs across IT and HR with deliberate gaps |
-| RAG Pipeline            |    25 | ChromaDB vector store with confidence threshold and escalation |
-| Ticket Integration      |    20 | Jira create and status functions with human-in-the-loop |
-| Orchestration & Routing |    15 | LangGraph intent detection routing all three flows |
-| Conversation Quality    |    10 | Polite tone, session memory, graceful error handling |
-| Code Quality & Docs     |    10 | Modular code, this README, architecture diagram |
-| **Total**               | **100** | |
-
----
-
-## ⚠️ Known Limitations
-
-- The agent runs as a **command-line interface only**. A web UI is not included but is listed as a bonus feature.
-- The agent **does not persist memory across sessions**. If you close and reopen the agent it will not remember your email from a previous conversation.
-- The Jira integration requires a **live internet connection**. If the API is unreachable the agent will inform you politely and suggest trying again later.
-
-
----
-
-## 🧪 Test Results
-
-All tests were run against the live system before submission.
-Every test file can be re-run independently to verify results.
-
-### Test Suite Summary
-
-| Test File | Purpose | Result |
-|---|---|---|
-|`test_confirmation.py`       | Human-in-the-loop confirmation                 | ✅ 6 of 6 passed |
-|`test_create_ticket.py`      | Ticket creation                                | ✅ 3 of 3 passed |
-| `test_edge_cases.py`        | 21 edge case scenarios                         | ✅ Zero crashes |
-| `test_error_handling.py`    | API failure error handling                     | ✅ 5 of 5 passed |
-| `test_flow_a.py`            | Flow A — KB answer verification                | ✅ 5 of 5 passed |
-| `test_flow_b.py`            | Flow B — Ticket creation verification          | ✅ 4 of 4 passed |
-| `test_flow_c.py`            | Flow C — Ticket status verification            | ✅ 5 of 5 passed |
-| `test_get_status.py`        | Ticket status retrieval                        | ✅ 4 of 4 passed |
-| `test_graceful_handling.py` | Edge case graceful handling                    | ✅ 10 of 10 passed |
-| `test_jira_connection.py`   | Live Jira connection                           | ✅ 5 of 5 passed |
-| `test_jira_langgraph.py`    | Installed and all agent dependencies are ready | ✅ 5 of 5 passed |
-| `test_rag_chain.py`         | RAG answer generation                          | ✅ 3 of 3 passed |
-| `test_retrieval.py`         | ChromaDB retrieval pipeline                    | ✅ All passed |
-| `test_security.py`          | No hardcoded secrets scan                      | ✅ 8 of 8 passed |
-| `test_threshold.py`         | Confidence threshold logic                     | ✅ 6 of 6 passed |
-| `test_ticket_status.py`     | End to end status lookup                       | ✅ 5 of 5 passed |
-
-
-### How to Run All Tests
-
-Run each test file individually from the project root
-with the virtual environment activated:
-
-```bash
-# Activate virtual environment first
-venv\Scripts\Activate.ps1
-
-# Run individual test files
-python tests/test_confirmation.py      # Pushed all modified and new files - agent phase complete
-python tests/test_create_ticket.py     # Added manual ticket creation test - all 3 tickets verified in Jira
-python tests/test_edge_cases.py        # Added edge case tests - agent robust with zero crashes
-python tests/test_error_handling.py    # Added comprehensive error handling for all API failures - Section 4.3…
-python tests/test_flow_a.py            # Updated README with test results self assessment, running instruction…
-python tests/test_flow_b.py            # Added Flow B official test - escalation and ticket creation verified
-python tests/test_flow_c.py            # Added Flow C official test - ticket status check verified
-python tests/test_get_status.py        # Added get_ticket_by_id and format_tickets functions - all status test…
-python tests/test_graceful_handling.py # Added graceful handling for edge cases greetings thanks and out of sc…
-python tests/test_jira_connection.py   # Pushed all modified and new files - agent phase complete
-python tests/test_langgraph.py         # Pushed all modified and new files - agent phase complete
-python tests/test_rag_chain.py         # Added RAG chain answer function and comprehensive tests 2nd try
-python tests/test_retrieval.py         # Added retrieval test script - pipeline verified working
-python tests/test_ticket_status.py     # Pushed all modified and new files - agent phase complete
-python tests/test_security.py          # Added security scan - no hardcoded secrets verified
-python tests/test_threshold.py         # Added confidence threshold logic and threshold tests
-
----
-
-## 🎯 Self Assessment Against Rubric
-
-| Category | Max Marks | Self Assessment | Evidence |
-|---|---|---|---|
-| Knowledge Base Quality | 20 | 18/20 | 40+ Q&A pairs across IT and HR with 7 deliberate gaps |
-| RAG Pipeline | 25 | 23/25 | ChromaDB with confidence threshold escalation and error handling |
-| Ticket Integration | 20 | 20/20 | Full Jira CRUD with human-in-the-loop confirmation |
-| Orchestration & Routing | 15 | 14/15 | LangGraph-style intent detection routing all three flows |
-| Conversation Quality | 10 | 9/10 | Polite tone session memory graceful error handling |
-| Code Quality & Docs | 10 | 9/10 | Modular code comprehensive tests this README |
-| **Total** | **100** | **93/100** | |
-
----
-
-## 🎬 Demo Video
-
-A demo video showing all three conversation flows is available here:
-
-> **[Add your Loom or YouTube link here before submitting]**
-
-The demo covers:
-- Flow A — Answering an IT password reset question from the knowledge base
-- Flow B — Escalating a monitor flickering issue to a Jira ticket
-- Flow C — Checking the status of an existing support ticket
-
----
-
-## 🏃 Running the Agent
-
-### Quick Start
+Follow these steps in order from a fresh clone.
 
 ```bash
 # 1. Clone the repository
@@ -537,52 +242,300 @@ cd SmartDesk_AI
 
 # 2. Create and activate virtual environment
 py -3.11 -m venv venv
-venv\Scripts\Activate.ps1
+venv\Scripts\Activate.ps1        # Windows
+source venv/bin/activate          # Mac / Linux
 
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Set up environment variables
-# Copy .env.example to .env and fill in your API keys
+# 4. Create your .env file (see Environment Variables section above)
 
-# 5. Index the knowledge base
-python -m src.data.index_knowledge_base   # index knowledge base
+# 5. Index the knowledge base (run once, or after updating KB files)
+python -m src.data.index_knowledge_base
 
 # 6. Start the agent
-python -m src.agents.agent               # run the agent
+python -m src.agents.agent
 ```
 
-### Sample Conversation
-SmartDesk : Hello! I am SmartDesk AI your IT and HR support
-assistant at Roadmap Consulting.
-How can I help you today?
-You       : How do I reset my password?
-SmartDesk : To reset your password at Roadmap Consulting
-please follow these steps:
-1. Go to https://passwords.roadmapconsulting.com
-2. Click Forgot Password
-3. Enter your employee ID
-4. Follow the email instructions
-Is there anything else I can help you with?
+---
+
+## 🐳 Setup — Docker
+
+Docker packages the entire application — Python runtime, all dependencies, and source code — into a portable container. No local Python installation required on target machines.
+
+### First-Time Setup
+
+```bash
+# 1. Make sure Docker Desktop is running (whale icon in taskbar)
+
+# 2. Build the container image (10–15 min first time, cached after)
+docker-compose build
+
+# 3. Index the knowledge base inside the container
+docker-compose run --rm smartdesk python -m src.data.index_knowledge_base
+
+# 4. Run the agent
+docker-compose run --rm smartdesk
+```
+
+### Daily Workflow
+
+```bash
+# Start the agent
+docker-compose run --rm smartdesk
+
+# Re-index after updating knowledge base files
+docker-compose run --rm smartdesk python -m src.data.index_knowledge_base
+
+# Rebuild after adding new packages to requirements.txt
+docker-compose build
+
+# Stop all containers
+docker-compose down
+```
+
+> ℹ️ ChromaDB is persisted to your local `./chroma_db` folder via a Docker volume. Your knowledge base survives container restarts.
 
 ---
 
-## 📋 Environment Variables Reference
+## 📚 Building the Knowledge Base
 
-Create a `.env` file in the project root with these variables:
+The knowledge base is the foundation of SmartDesk AI. Document quality directly determines answer quality.
 
-| Variable | Description | Example |
+### Minimum Requirements
+
+| Requirement | Target |
+|---|---|
+| Total question-answer pairs | At least 30–50 |
+| IT topics covered | Password reset, VPN, MFA, email setup |
+| HR topics covered | Leave policy, WFH, onboarding, reimbursement |
+| Deliberate gaps | At least 5 unanswerable topics to test escalation |
+
+### Option A — Download Ready-Made Datasets
+
+- **HR Policies:** [huggingface.co/datasets?search=hr+pol](https://huggingface.co/datasets?sort=trending&search=hr+pol)
+- **IT Support:** [huggingface.co/datasets?search=it+tick](https://huggingface.co/datasets?sort=trending&search=it+tick)
+- **Recommended starter:** `strova-ai/hr-policies-qa-dataset` on Hugging Face
+
+### Option B — Generate With ChatGPT
+
+**IT Guide prompt:**
+```
+You are the IT Admin at Roadmap Consulting, a 105-employee company.
+Write an internal guide covering: password reset steps, VPN setup
+for Windows and Mac, MFA setup, and email setup on mobile.
+Write in simple professional language for employees.
+```
+
+**HR Policy prompt:**
+```
+You are the HR Manager at Roadmap Consulting. Write a Leave Policy
+covering casual leave, sick leave, earned leave, and work from home
+policy. Include how to apply and approval steps. Keep it simple
+and professional.
+```
+
+### Option C — Combine Both (Recommended ⭐)
+
+Download the Hugging Face HR dataset for breadth, then generate synthetic IT guides for depth. This is the fastest path to a high-quality knowledge base.
+
+### Adjusting RAG Settings
+
+All retrieval settings live in `config.yaml` at the project root:
+
+```yaml
+rag:
+  chunk_size: 800            # Characters per document chunk
+  chunk_overlap: 150         # Overlap between chunks
+  top_k_results: 3           # Chunks retrieved per query
+  confidence_threshold: 0.15 # Minimum similarity score to attempt an answer
+  embedding_model: text-embedding-3-small
+  llm_model: gpt-4o-mini
+  chroma_db_path: ./chroma_db
+  chroma_collection_name: smartdesk_knowledge
+```
+
+After changing any value, re-index to rebuild ChromaDB:
+```bash
+python -m src.data.index_knowledge_base
+```
+
+---
+
+## 💬 Example Conversation Flows
+
+### Flow A — Question Answered from Knowledge Base
+
+```
+You       : Hi, how do I reset my password?
+
+SmartDesk : To reset your password, visit the Self-Service Password
+            Portal at https://passwords.roadmapconsulting.com.
+            Click "Forgot Password", enter your employee ID, and
+            follow the instructions sent to your registered email.
+            If you are locked out, contact IT at ext. 2020.
+            Is there anything else I can help you with?
+
+You       : No, thanks!
+
+SmartDesk : You are very welcome! I am glad I could help.
+            Is there anything else I can assist you with today?
+```
+
+### Flow B — Question Escalated to Ticket Creation
+
+```
+You       : My monitor has been flickering for two days.
+
+SmartDesk : I am sorry I could not find information about that in
+            my knowledge base. I can create a support ticket for
+            the team to look into this for you.
+            Could you please share your work email address?
+
+You       : jane.doe@roadmapconsulting.com
+
+SmartDesk : I would like to create a support ticket for you.
+
+            ----------------------------------------
+              📋 Title    : My monitor has been flickering
+              🏷  Category : IT Support
+              📧 Email    : jane.doe@roadmapconsulting.com
+              🤖 Created by: SmartDesk AI Agent
+            ----------------------------------------
+
+            Shall I go ahead and create this ticket?
+            Type YES to confirm or NO to cancel.
+
+You       : Yes
+
+SmartDesk : Your support ticket has been created successfully!
+
+              Ticket ID  : SSDAI-14
+              Title      : My monitor has been flickering
+              URL        : https://yourname.atlassian.net/browse/SSDAI-14
+
+            The support team will review your ticket and get back
+            to you shortly. Is there anything else I can help you with?
+```
+
+### Flow C — Ticket Status Check
+
+```
+You       : Any updates on my support ticket?
+
+SmartDesk : Could you please share your work email address
+            so I can look that up for you?
+
+You       : jane.doe@roadmapconsulting.com
+
+SmartDesk : I found 1 ticket(s) for jane.doe@roadmapconsulting.com:
+
+            🎫 SSDAI-14 : My monitor has been flickering
+               📊 Status  : In Progress
+               📅 Created : 2026-06-02
+               💬 Update  : Replacement monitor ordered, delivery Thursday
+               🔗 Link    : https://yourname.atlassian.net/browse/SSDAI-14
+
+            Is there anything else I can help you with?
+```
+
+---
+
+## 🧪 Test Suite
+
+All 16 test files can be run independently from the project root.
+
+### Test Results Summary
+
+| Test File | What It Verifies | Result |
 |---|---|---|
-| `OPENAI_API_KEY` | Your OpenAI API key | `sk-proj-...` |
-| `JIRA_EMAIL` | Email used for Jira account | `you@email.com` |
-| `JIRA_API_TOKEN` | Jira API token from Atlassian | `ATATT3x...` |
-| `JIRA_SERVER` | Your Atlassian domain | `https://name.atlassian.net` |
-| `JIRA_PROJECT_KEY` | Jira project key | `xxxxx` |
+| `test_confirmation.py` | Human-in-the-loop yes/no/cancel/change title | ✅ 6 of 6 passed |
+| `test_create_ticket.py` | End-to-end Jira ticket creation across 3 categories | ✅ 3 of 3 passed |
+| `test_edge_cases.py` | 21 boundary and unexpected input scenarios | ✅ Zero crashes |
+| `test_error_handling.py` | API failure graceful degradation | ✅ 5 of 5 passed |
+| `test_flow_a.py` | Flow A official: KB answer verification | ✅ 5 of 5 passed |
+| `test_flow_b.py` | Flow B official: escalation and ticket creation | ✅ 4 of 4 passed |
+| `test_flow_c.py` | Flow C official: ticket status check | ✅ 5 of 5 passed |
+| `test_get_status.py` | Jira status retrieval by email and ticket ID | ✅ 4 of 4 passed |
+| `test_graceful_handling.py` | Greetings, thanks, off-topic, long/short inputs | ✅ 10 of 10 passed |
+| `test_jira_connection.py` | Live Jira API connectivity and project access | ✅ 5 of 5 passed |
+| `test_langgraph.py` | LangGraph install and all agent dependencies | ✅ 5 of 5 passed |
+| `test_rag_chain.py` | RAG answer quality for in-scope and out-of-scope | ✅ 3 of 3 passed |
+| `test_retrieval.py` | ChromaDB retrieval scores and source mapping | ✅ All passed |
+| `test_security.py` | No hardcoded secrets across all Python and MD files | ✅ 8 of 8 passed |
+| `test_threshold.py` | Confidence threshold in-scope vs out-of-scope routing | ✅ 6 of 6 passed |
+| `test_ticket_status.py` | End-to-end ticket status lookup all scenarios | ✅ 5 of 5 passed |
+
+### How to Run Tests
+
+```bash
+# Activate virtual environment first
+venv\Scripts\Activate.ps1
+
+# Run a single test
+python tests/test_flow_a.py
+
+# Run all tests with pytest
+python -m pytest tests/
+
+# Run all tests via Docker
+docker-compose run --rm smartdesk python -m pytest tests/
+```
 
 ---
+
+## 🎯 Self Assessment Against Rubric
+
+| Category | Max Marks | Self Assessment | Evidence |
+|---|---|---|---|
+| Knowledge Base Quality | 20 | 18/20 | 40+ Q&A pairs across IT and HR with 7 deliberate escalation gaps |
+| RAG Pipeline | 25 | 23/25 | ChromaDB with confidence threshold, escalation routing, error handling |
+| Ticket Integration | 20 | 20/20 | Full Jira CRUD with human-in-the-loop confirmation flow |
+| Orchestration & Routing | 15 | 14/15 | Intent detection routing all three flows with session state management |
+| Conversation Quality | 10 | 9/10 | Polite tone, session memory, graceful degradation on all API failures |
+| Code Quality & Docs | 10 | 9/10 | Modular src/ layout, 16 test files, Docker support, this README |
+| **Total** | **100** | **93/100** | |
+
 ---
 
-## 👤 Author
+## 🛠 Technology Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Language** | Python 3.11 | Core programming language |
+| **LLM** | OpenAI GPT-4o-mini | Generates grounded answers from retrieved context |
+| **Embeddings** | OpenAI text-embedding-3-small | Converts text to searchable vectors |
+| **Vector Store** | ChromaDB | Stores and searches document chunks by similarity |
+| **RAG Framework** | LangChain | Connects retriever, embeddings, and LLM |
+| **Agent Orchestration** | LangGraph | Routes intents and manages conversation state |
+| **Ticketing** | Jira Cloud REST API | Creates and reads support tickets |
+| **Configuration** | PyYAML + config.yaml | Centralised RAG pipeline settings |
+| **Secret Management** | python-dotenv | Loads API keys from .env file |
+| **Containerisation** | Docker + docker-compose | Portable, reproducible deployment |
+| **Testing** | Python unittest + pytest | 16-file test suite covering all flows and edge cases |
+| **Version Control** | Git + GitHub | Source control and submission |
+
+---
+
+## 🎬 Demo Video
+
+> **[Add your Loom or YouTube link here before submitting]**
+
+The demo covers:
+- Flow A — Answering an IT password reset question from the knowledge base
+- Flow B — Escalating a monitor issue to a Jira ticket with human-in-the-loop confirmation
+- Flow C — Checking the status of an existing support ticket by email
+
+---
+
+## ⚠️ Known Limitations
+
+- **CLI only.** The agent runs as a command-line interface. A web UI is scaffolded in `src/web_app/` but not yet implemented.
+- **No cross-session memory.** Session state resets when the agent is restarted. The agent does not remember your email from a previous run.
+- **Live API dependency.** Both OpenAI and Jira require an active internet connection. The agent handles API failures gracefully and informs the employee to try again.
+- **Single-user design.** The current architecture serves one conversation at a time. Multi-user concurrency would require a session store (e.g. Redis).
+
+---
 
 ## 👤 Author
 
@@ -592,29 +545,14 @@ Create a `.env` file in the project root with these variables:
 |---|---|
 | Program | Interview Kickstart — Applied Agentic AI |
 | Project | SmartDesk AI Capstone |
-| GitHub | https://github.com/oscar2412 |
-| Jira Project | https://xxxxxxxx.atlassian.net |
+| GitHub | [github.com/oscar2412](https://github.com/oscar2412) |
 
 ---
 
 <div align="center">
 
-*Built with 🤖 RAG · Agentic AI · Jira Integration · Python 3.11*
+*Built with 🤖 RAG · Agentic AI · Jira Integration · Docker · Python 3.11*
 
 *Interview Kickstart — Applied Agentic AI Program*
-
-</div>
-
----
-
-<div align="center">
-
----
-
-*Built with 🤖 RAG · Agentic AI · Jira Integration · Python 3.11*
-
-*Interview Kickstart — Applied Agentic AI Program*
-
----
 
 </div>
