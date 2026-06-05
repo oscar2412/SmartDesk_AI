@@ -1,5 +1,10 @@
 [
 {
+"question": "I have an HR question",
+"answer": "I'm ready for you HR question. If you ask a question that I don't know the answer I know who does.",
+"category": "Casual HR Question"
+},
+{
 "question": "How many Casual Leave days do I get each year?",
 "answer": "Eligible full-time employees receive 8 Casual Leave days per calendar year. Casual Leave may be taken as a full day, half day, or hourly increment if approved by the manager and supported by the Leave Management System.",
 "category": "Casual Leave"

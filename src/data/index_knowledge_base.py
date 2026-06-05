@@ -1,10 +1,12 @@
 import os
 import json
 import shutil
+import sys
+import time
 from dotenv import load_dotenv
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
 load_dotenv()
@@ -162,14 +164,36 @@ embeddings = OpenAIEmbeddings(
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
 
-if os.path.exists(CHROMA_DB_PATH):
-    for _item in os.listdir(CHROMA_DB_PATH):
-        _item_path = os.path.join(CHROMA_DB_PATH, _item)
-        if os.path.isfile(_item_path) or os.path.islink(_item_path):
-            os.unlink(_item_path)
-        elif os.path.isdir(_item_path):
-            shutil.rmtree(_item_path)
-    print("  Cleared existing ChromaDB database.")
+def clear_chroma_db(path: str, retries: int = 5, delay_seconds: float = 1.0) -> None:
+    if not os.path.exists(path):
+        return
+
+    for attempt in range(1, retries + 1):
+        try:
+            for item in os.listdir(path):
+                item_path = os.path.join(path, item)
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.unlink(item_path)
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+            print("  Cleared existing ChromaDB database.")
+            return
+        except PermissionError as error:
+            if attempt == retries:
+                print()
+                print("ERROR: Could not clear ChromaDB because files are in use.")
+                print(f"Path: {path}")
+                print(f"Details: {error}")
+                print()
+                print("Fix:")
+                print("  1) Stop running apps that use the vector DB (Streamlit/agent/tests).")
+                print("  2) Run this command again: python -m src.data.index_knowledge_base")
+                print()
+                sys.exit(1)
+            time.sleep(delay_seconds)
+
+
+clear_chroma_db(CHROMA_DB_PATH)
 
 Chroma.from_documents(
     documents=chunked_docs,
