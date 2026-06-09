@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from tokenizers.normalizers import Replace
 
-from src.rag.rag_config_v0 import LLM_MODEL
+from src.rag.rag_config import LLM_MODEL
 from src.utils.helpers import (
     build_greeting,
     build_greeting_response,
