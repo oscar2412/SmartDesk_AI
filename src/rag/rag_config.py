@@ -1,17 +1,29 @@
-import yaml
-import os
+"""
+SmartDesk AI — RAG Configuration Settings.
 
-_config_path = os.path.join(os.path.dirname(__file__), '..', '..', 'config.yaml')
-with open(_config_path, 'r') as _f:
-    _cfg = yaml.safe_load(_f)
+Central configuration file for all RAG pipeline settings
+including chunking strategy, embedding model, and ChromaDB
+connection details. Change values here to tune performance.
+"""
 
-_rag = _cfg['rag']
+# ── Chunking Settings ────────────────────────────────────────────
+CHUNK_SIZE    = 800    # Number of characters per chunk
+CHUNK_OVERLAP = 150    # Characters shared between chunks
 
-CHUNK_SIZE             = _rag['chunk_size']
-CHUNK_OVERLAP          = _rag['chunk_overlap']
-TOP_K_RESULTS          = _rag['top_k_results']
-CONFIDENCE_THRESHOLD   = _rag['confidence_threshold']
-EMBEDDING_MODEL        = _rag['embedding_model']
-LLM_MODEL              = _rag['llm_model']
-CHROMA_DB_PATH         = _rag['chroma_db_path']
-CHROMA_COLLECTION_NAME = _rag['chroma_collection_name']
+# ── Retrieval Settings ───────────────────────────────────────────
+TOP_K_RESULTS = 3      # Number of chunks to retrieve per query
+
+# ── Confidence Threshold ─────────────────────────────────────────
+# If the best match scores below this value the agent will
+# escalate to ticket creation instead of attempting an answer
+CONFIDENCE_THRESHOLD = 0.15
+
+# ── Embedding Model ──────────────────────────────────────────────
+EMBEDDING_MODEL = "text-embedding-3-small"
+
+# ── LLM Model ────────────────────────────────────────────────────
+LLM_MODEL = "gpt-4o-mini"
+
+# ── ChromaDB Settings ────────────────────────────────────────────
+CHROMA_DB_PATH         = "./chroma_db"
+CHROMA_COLLECTION_NAME = "smartdesk_knowledge"

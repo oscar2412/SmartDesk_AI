@@ -1,3 +1,13 @@
+"""
+SmartDesk AI — RAG Answer Generation Chain.
+
+Takes a user query, retrieves relevant chunks from ChromaDB,
+and generates a grounded answer using GPT with a strict
+system prompt to prevent hallucination.
+
+This module is imported by the agent and workflow files.
+"""
+
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -6,14 +16,20 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from src.rag.retrieval_with_threshold import (
     retrieve_with_threshold,
     RESULT_FOUND,
-    RESULT_NOT_FOUND,
+    RESULT_NOT_FOUND
 )
 from src.rag.rag_config import LLM_MODEL
 
+# Load environment variables
 load_dotenv()
 
+# ── Result Types ─────────────────────────────────────────────────
 ANSWER_FOUND     = "ANSWER_FOUND"
 ANSWER_NOT_FOUND = "ANSWER_NOT_FOUND"
+
+# ── System Prompt ────────────────────────────────────────────────
+# This is the instruction given to GPT before every query.
+# It strictly controls GPT behavior to prevent hallucination.
 
 SYSTEM_PROMPT = """
 You are SmartDesk AI, a helpful and professional IT and HR
@@ -41,8 +57,22 @@ CONTEXT:
 
 
 def get_rag_answer(query: str, chat_history: list = None) -> dict:
+    """
+    Main RAG function. Takes a query and returns a
+    grounded answer from the knowledge base.
+
+    Returns a dictionary with:
+        status   : ANSWER_FOUND or ANSWER_NOT_FOUND
+        answer   : the generated answer text
+        query    : the original query
+        sources  : list of source files used
+        reason   : explanation of the result
+    """
+
+    # Step 1 — Retrieve relevant chunks with threshold check
     retrieval_result = retrieve_with_threshold(query)
 
+    # Step 2 — If no good chunks found return NOT_FOUND
     if retrieval_result["status"] == RESULT_NOT_FOUND:
         return {
             "status" : ANSWER_NOT_FOUND,
@@ -55,6 +85,7 @@ def get_rag_answer(query: str, chat_history: list = None) -> dict:
             "reason" : retrieval_result["reason"]
         }
 
+    # Step 3 — Build context from retrieved chunks
     chunks = retrieval_result["chunks"]
     context_parts = []
     sources = []
@@ -67,25 +98,29 @@ def get_rag_answer(query: str, chat_history: list = None) -> dict:
 
     context = "\n\n---\n\n".join(context_parts)
 
+    # Step 4 — Build the prompt with context injected
     system_message = SystemMessage(
         content=SYSTEM_PROMPT.format(context=context)
     )
     human_message = HumanMessage(content=query)
 
+    # Step 5 — Call GPT to generate a grounded answer
     llm = ChatOpenAI(
         model=LLM_MODEL,
         temperature=0,
         openai_api_key=os.getenv("OPENAI_API_KEY")
     )
 
+    # Build message list including chat history if provided
     messages = [system_message]
     if chat_history:
         messages.extend(chat_history)
     messages.append(human_message)
 
+    # Call GPT with error handling
     try:
         response = llm.invoke(messages)
-        answer = response.content.strip()
+        answer   = response.content.strip()
     except Exception as e:
         return {
             "status" : ANSWER_NOT_FOUND,
@@ -98,6 +133,7 @@ def get_rag_answer(query: str, chat_history: list = None) -> dict:
             "reason" : f"OpenAI API error: {str(e)}"
         }
 
+    # Step 6 — Check if GPT admitted it did not know
     not_found_phrase = "I don't have enough information"
     if not_found_phrase in answer:
         return {
@@ -108,6 +144,7 @@ def get_rag_answer(query: str, chat_history: list = None) -> dict:
             "reason" : "GPT could not find sufficient info in context."
         }
 
+    # Step 7 — Return the successful answer
     return {
         "status" : ANSWER_FOUND,
         "answer" : answer,
@@ -118,15 +155,22 @@ def get_rag_answer(query: str, chat_history: list = None) -> dict:
 
 
 def format_sources(sources: list) -> str:
+    """
+    Formats a list of source file paths into a
+    clean readable string for display to the employee.
+
+    Example output:
+        Sources: IT Support Guide, HR Leave Policy
+    """
     if not sources:
         return ""
 
     name_map = {
-        "knowledge_base/it_support_guide.md"        : "IT Support Guide",
-        "knowledge_base/hr_leave_policy.md"          : "HR Leave Policy",
-        "knowledge_base/it_qa.json"                  : "IT Q&A Database",
-        "knowledge_base/hr_qa.json"                  : "HR Q&A Database",
-        "knowledge_base/hr-policies-qa-dataset.jsonl": "HR Policies Dataset"
+        "src/data/knowledge_base/it_support_guide.md"        : "IT Support Guide",
+        "src/data/knowledge_base/hr_leave_policy.md"          : "HR Leave Policy",
+        "src/data/knowledge_base/it_qa.json"                  : "IT Q&A Database",
+        "src/data/knowledge_base/hr_qa.json"                  : "HR Q&A Database",
+        "src/data/knowledge_base/hr-policies-qa-dataset.jsonl": "HR Policies Dataset"
     }
 
     readable_names = []
@@ -137,6 +181,9 @@ def format_sources(sources: list) -> str:
 
     return "Sources: " + ", ".join(readable_names)
 
+
+# ── Quick Self Test ──────────────────────────────────────────────
+# Only runs when you execute this file directly.
 
 if __name__ == "__main__":
     print("=" * 60)
@@ -151,7 +198,6 @@ if __name__ == "__main__":
     result = get_rag_answer(test_query)
 
     print(f"Status         : {result['status']}")
-    print(f"Sources raw    : {result['sources']}")
     print(f"Sources pretty : {format_sources(result['sources'])}")
     print()
     print("Answer:")

@@ -29,6 +29,11 @@ db = Chroma(
 
 
 def retrieve_with_threshold(query: str) -> dict:
+    """
+    Searches ChromaDB for relevant chunks.
+    Applies confidence threshold before returning results.
+    Returns RESULT_FOUND or RESULT_NOT_FOUND.
+    """
     try:
         results = db.similarity_search_with_score(query, k=TOP_K_RESULTS)
 

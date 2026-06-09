@@ -4,7 +4,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 from tokenizers.normalizers import Replace
 
-from src.rag.rag_config import LLM_MODEL
+from src.rag.rag_config_v0 import LLM_MODEL
 from src.utils.helpers import (
     build_greeting,
     build_greeting_response,
@@ -84,6 +84,7 @@ RULES:
 # ── Session Factory ──────────────────────────────────────────────
 
 def create_session() -> dict:
+    """Creates and returns a fresh session state dictionary."""
     return {
         "employee_email"      : None,
         "pending_ticket"      : None,
@@ -98,6 +99,7 @@ def create_session() -> dict:
 # ── Intent Detection ─────────────────────────────────────────────
 
 def detect_intent(message: str) -> str:
+    """Classifies employee message into KB_QUERY or CHECK_STATUS."""
     if not message or len(message.strip()) < 2:
         return INTENT_UNCLEAR
 
@@ -129,6 +131,7 @@ def detect_intent(message: str) -> str:
 # ── Core Orchestrator ────────────────────────────────────────────
 
 def process_message(user_message: str, session: dict) -> str:
+    """Routes employee message to correct flow handler."""
     message = user_message.strip()
 
     if not message:

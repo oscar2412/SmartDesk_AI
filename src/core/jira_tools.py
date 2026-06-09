@@ -21,6 +21,7 @@ TICKETS_FAILED = "TICKETS_FAILED"
 
 
 def get_jira_client():
+    """Creates and returns a connected Jira client."""
     return JIRA(
         server=JIRA_SERVER,
         basic_auth=(JIRA_EMAIL, JIRA_API_TOKEN)
@@ -33,6 +34,7 @@ def create_ticket(
     description:    str,
     category:       str = "General Support"
 ) -> dict:
+    """Creates a new support ticket in Jira."""
     try:
         jira = get_jira_client()
 
@@ -84,6 +86,7 @@ def create_ticket(
 
 
 def get_ticket_status(employee_email: str) -> dict:
+    """Retrieves all open tickets for a given employee email."""
     try:
         jira = get_jira_client()
 
@@ -148,6 +151,7 @@ def get_ticket_status(employee_email: str) -> dict:
 
 
 def get_ticket_by_id(ticket_id: str) -> dict:
+    """Retrieves a single ticket by its Jira ticket ID."""
     try:
         jira  = get_jira_client()
         issue = jira.issue(ticket_id, fields="summary,status,created,comment")
@@ -194,6 +198,7 @@ def get_ticket_by_id(ticket_id: str) -> dict:
 
 
 def format_tickets(tickets: list) -> str:
+    """Formats ticket list into readable string for display."""
     if not tickets:
         return "No tickets found."
 
