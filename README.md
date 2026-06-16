@@ -432,7 +432,10 @@ OpenAI and Jira are the only external service dependencies.
 ---
 
 ## Author
-
 Oscar — AI Generalist in Training
+First AI Capstone Project
 Interview Kickstart · Applied Agentic AI Program · Capstone Project
 GitHub: https://github.com/oscar2412/SmartDesk_AI
+
+## Disclaimer
+This tool is for educational purposes only and demonstrates the tip of the iceburg assistant for self service and assisted support. The demonstrated known answers are for this small controlled sample. Your real world experience will vary. Therefore, communicate with directly with the IT or HR department within your company for actual resolutions to your requests. Thank you
