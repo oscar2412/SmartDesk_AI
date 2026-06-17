@@ -66,10 +66,10 @@ PATHS = {
     # Documentation files
     "readme"          : "README.md",
     "self_assess"     : "self_assessment.md",
-    "arch_diagram"    : "architecture_diagram.drawio.png",
+    "arch_diagram"    : "docs/architecture_diagram.drawio.png",
     "arch_md"         : "architecture.md",
     "agent_design"    : "agent_design.md",
-    "agent_flowchart" : "agent_flowchart.png",
+    "agent_flowchart" : "docs/agent_flowchart.png",
     "requirements"    : "requirements.txt",
     "env_example"     : ".env.example",
     "gitignore"       : ".gitignore",
@@ -472,7 +472,7 @@ print()
 print("E3: Architecture diagram")
 e_score += check("architecture_diagram exists",
     exists("arch_diagram") or
-    os.path.exists("architecture_diagram.png"), 2,
+    os.path.exists("docs/architecture_diagram.png"), 2,
     "Export diagram from draw.io as PNG")
 e_score += check("agent_flowchart.png exists",
     exists("agent_flowchart"), 1)
