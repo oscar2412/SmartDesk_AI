@@ -7,18 +7,16 @@ all through a conversational terminal interface.
 
 ---
 
-## Quick Start — Running the Agent
+## Quick Start
 
 ```bash
 # 1. Activate your virtual environment
-venv\Scripts\Activate.ps1
+venv\Scripts\Activate.ps1          # Windows
+source venv/bin/activate           # Mac / Linux
 
 # 2. Start the agent
-python src/agents/agent.py
+python -m src.agents.agent
 ```
-
-The agent starts and waits for your input. Type your question
-and press Enter.
 
 ```
 ============================================================
@@ -33,7 +31,7 @@ SmartDesk : Hello! I am SmartDesk AI, your IT and HR support
 You        :
 ```
 
-**Session commands:**
+### Session commands
 
 | Command | What It Does |
 |---|---|
@@ -64,16 +62,17 @@ You        :
 SmartDesk AI handles three conversation flows:
 
 **Flow A — Knowledge Base Answer**
-Searches the indexed knowledge base and returns a grounded answer
-using GPT. Will not make up information that is not in the documents.
+Searches the indexed ChromaDB vector store and returns a grounded answer
+using GPT-4o-mini. The agent will not fabricate information — if the
+confidence score falls below the threshold it escalates to Flow B.
 
 **Flow B — Ticket Creation**
-When the agent cannot find an answer it offers to create a Jira
-support ticket. The employee reviews a summary and must confirm
-before any ticket is created.
+When the agent cannot find an answer it offers to raise a Jira support
+ticket. The employee reviews a summary and must type `YES` before any
+ticket is created (human-in-the-loop confirmation).
 
 **Flow C — Ticket Status Check**
-Retrieves all open Jira tickets for a given employee email address
+Retrieves all open Jira tickets linked to a given employee email address
 and displays their current status and latest comments.
 
 ---
@@ -85,11 +84,12 @@ SmartDesk_AI/
 │
 ├── src/                            # All application source code
 │   ├── agents/
-│   │   └── agent.py                # Main agent orchestrator
+│   │   └── agent.py                # Main orchestrator — intent detection,
+│   │                               # session management, message routing
 │   ├── core/
-│   │   └── jira_tools.py           # Jira API integration
+│   │   └── jira_tools.py           # Jira Cloud REST API integration
 │   ├── data/
-│   │   ├── index_knowledge_base.py # Indexes KB into ChromaDB
+│   │   ├── index_knowledge_base.py # Indexes KB documents into ChromaDB
 │   │   └── knowledge_base/
 │   │       ├── it_support_guide.md
 │   │       ├── hr_leave_policy.md
@@ -98,20 +98,20 @@ SmartDesk_AI/
 │   │       ├── hr-policies-qa-dataset.jsonl
 │   │       └── out_of_scope_topics.txt
 │   ├── rag/
-│   │   ├── rag_chain.py            # RAG answer generation
+│   │   ├── rag_chain.py            # RAG answer generation via LangChain
 │   │   ├── rag_config.py           # Centralised RAG settings
-│   │   └── retrieval_with_threshold.py
+│   │   └── retrieval_with_threshold.py  # ChromaDB retrieval + confidence filter
 │   ├── utils/
-│   │   ├── helpers.py
+│   │   ├── helpers.py              # Validation, greeting builders, formatters
 │   │   └── company_profile.txt
 │   ├── web_app/
-│   │   └── app.py                  # Web interface (optional)
+│   │   └── app.py                  # Experimental Streamlit web interface
 │   └── workflow/
-│       ├── flow_a.py               # Knowledge base flow
+│       ├── flow_a.py               # Knowledge base query flow
 │       ├── flow_b.py               # Ticket creation flow
-│       └── flow_c.py               # Ticket status flow
+│       └── flow_c.py               # Ticket status check flow
 │
-├── tests/                          # All test files (15 total)
+├── tests/                          # 16 test files
 │   ├── test_flow_a.py
 │   ├── test_flow_b.py
 │   ├── test_flow_c.py
@@ -129,17 +129,25 @@ SmartDesk_AI/
 │   ├── test_threshold.py
 │   └── test_ticket_status.py
 │
-├── chroma_db/                      # Vector database (auto-generated)
-├── .env                            # Secret keys — never committed
+├── docs/                           # Project documentation and diagrams
+│   ├── agent_design.md
+│   ├── agent_flowchart.md
+│   ├── agent_flowchart.png
+│   ├── agent_flowchart.jpg
+│   ├── architecture.md
+│   └── architecture_diagram.drawio.png
+│
+├── chroma_db/                      # Vector database (auto-generated, git-ignored)
+├── .env                            # Secret keys — never commit this file
 ├── .env.example                    # Environment variable template
 ├── .gitignore
-├── config.yaml                     # Application configuration
-├── conftest.py                     # pytest configuration
-├── confidence_check.py             # Evaluator rubric check
+├── .dockerignore
+├── config.yaml                     # RAG pipeline configuration
+├── conftest.py                     # pytest shared fixtures
+├── poise_check.py                  # Evaluator confidence rubric check
 ├── docker-compose.yml
 ├── Dockerfile
-├── requirements.txt
-└── README.md
+└── requirements.txt
 ```
 
 ---
@@ -150,7 +158,7 @@ SmartDesk_AI/
 - Git
 - An OpenAI account with API access
 - A Jira Cloud account (free tier is sufficient)
-- A Jira API token from your Atlassian account settings
+- A Jira API token from Atlassian account settings
 
 ---
 
@@ -181,41 +189,40 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**4. Set up your environment variables**
+**4. Set up environment variables**
 
 ```bash
-copy .env.example .env
+copy .env.example .env        # Windows
+cp .env.example .env          # Mac / Linux
 ```
 
-Open `.env` and replace all placeholder values.
-See the [Configuration](#configuration) section below.
+Open `.env` and fill in all placeholder values. See [Configuration](#configuration) below.
 
 **5. Index the knowledge base**
 
-Run this once before starting the agent for the first time.
-It reads all documents, chunks them, creates embeddings, and
-stores everything in ChromaDB.
+Run this once before starting the agent for the first time. It reads all
+documents, chunks them, generates embeddings, and stores everything in ChromaDB.
 
 ```bash
 python src/data/index_knowledge_base.py
 ```
 
-A `chroma_db/` folder appears when indexing is complete.
-Re-run this command any time you add or change documents
-in the `knowledge_base/` folder.
+A `chroma_db/` folder is created when indexing completes. Re-run this command
+any time you add or update documents in `knowledge_base/`.
 
 **6. Start the agent**
 
 ```bash
-python src/agents/agent.py
+python -m src.agents.agent
 ```
 
 ---
 
 ## Configuration
 
-Create a `.env` file in the project root using `.env.example`
-as a template. Never commit `.env` to version control.
+### Environment variables
+
+Create a `.env` file from `.env.example`. Never commit `.env` to version control.
 
 | Variable | Description | Example |
 |---|---|---|
@@ -225,12 +232,19 @@ as a template. Never commit `.env` to version control.
 | `JIRA_SERVER` | Your Atlassian domain | `https://name.atlassian.net` |
 | `JIRA_PROJECT_KEY` | Short key for your Jira project | `SSDAI` |
 
-To create a Jira API token visit:
+To create a Jira API token, visit:
 `https://id.atlassian.com/manage-profile/security/api-tokens`
 
-RAG pipeline settings including chunk size, chunk overlap,
-confidence threshold, embedding model, and LLM model are
-all controlled in `src/rag/rag_config.py`.
+### RAG Pipeline Settings (`config.yaml`)
+
+| Setting | Default | Description |
+|---|---|---|
+| `chunk_size` | `800` | Characters per document chunk |
+| `chunk_overlap` | `150` | Overlap between adjacent chunks |
+| `top_k_results` | `3` | Number of chunks retrieved per query |
+| `confidence_threshold` | `0.15` | Minimum score to return an answer |
+| `embedding_model` | `text-embedding-3-small` | OpenAI embedding model |
+| `llm_model` | `gpt-4o-mini` | OpenAI chat model |
 
 ---
 
@@ -241,13 +255,12 @@ all controlled in `src/rag/rag_config.py`.
 ```
 You        : How do I reset my password?
 
-SmartDesk  : To reset your password at Roadmap Consulting
-             follow these steps:
+SmartDesk  : To reset your password at Roadmap Consulting, follow these steps:
              1. Go to https://passwords.roadmapconsulting.com
              2. Click Forgot Password
              3. Enter your employee ID
              4. Follow the instructions in the email sent to you
-             If you are still locked out contact IT at ext. 2020.
+             If you are still locked out, contact IT at ext. 2020.
 
              Is there anything else I can help you with?
 ```
@@ -257,9 +270,8 @@ SmartDesk  : To reset your password at Roadmap Consulting
 ```
 You        : My monitor keeps flickering
 
-SmartDesk  : I could not find information about that in my
-             knowledge base. I can create a support ticket
-             for the IT team.
+SmartDesk  : I could not find information about that in my knowledge base.
+             I can create a support ticket for the IT team.
 
              What is your work email address?
 
@@ -306,15 +318,13 @@ SmartDesk  : I found 2 ticket(s) for jane@roadmapconsulting.com:
 
 ## Running the Tests
 
-All test files are in the `tests/` folder.
-
 **Run all tests:**
 
 ```bash
 pytest tests/ -v
 ```
 
-**Run a specific test file:**
+**Run a specific flow's tests:**
 
 ```bash
 pytest tests/test_flow_a.py -v
@@ -322,18 +332,10 @@ pytest tests/test_flow_b.py -v
 pytest tests/test_flow_c.py -v
 ```
 
-**Run an individual test script directly:**
-
-```bash
-python tests/test_security.py
-python tests/test_edge_cases.py
-python tests/test_error_handling.py
-```
-
 **Run the evaluator confidence check:**
 
 ```bash
-python confidence_check.py
+python poise_check.py
 ```
 
 **Test file reference:**
@@ -343,18 +345,18 @@ python confidence_check.py
 | `test_flow_a.py` | Flow A — knowledge base answers |
 | `test_flow_b.py` | Flow B — ticket creation end to end |
 | `test_flow_c.py` | Flow C — ticket status retrieval |
-| `test_confirmation.py` | Human-in-the-loop confirmation |
+| `test_confirmation.py` | Human-in-the-loop YES/NO confirmation |
 | `test_create_ticket.py` | Jira ticket creation |
 | `test_edge_cases.py` | 21 edge case scenarios |
-| `test_error_handling.py` | API failure degradation |
+| `test_error_handling.py` | API failure and graceful degradation |
 | `test_get_status.py` | Ticket status lookup |
-| `test_graceful_handling.py` | Unexpected input handling |
+| `test_graceful_handling.py` | Unexpected and malformed input |
 | `test_jira_connection.py` | Live Jira connection |
-| `test_langgraph.py` | LangGraph installation |
+| `test_langgraph.py` | LangGraph installation check |
 | `test_rag_chain.py` | RAG answer generation |
 | `test_retrieval.py` | ChromaDB retrieval pipeline |
 | `test_security.py` | No hardcoded secrets scan |
-| `test_threshold.py` | Confidence threshold logic |
+| `test_threshold.py` | Confidence threshold filtering |
 | `test_ticket_status.py` | Full status lookup scenarios |
 
 ---
@@ -362,42 +364,61 @@ python confidence_check.py
 ## Architecture
 
 ```
-Employee Input (Terminal)
-         |
-         v
-    src/agents/agent.py
-    Intent Detection
-         |
-         |-- KB_QUERY ---------> src/rag/rag_chain.py
-         |                              |
-         |                 src/rag/retrieval_with_threshold.py
-         |                              |
-         |                        chroma_db/ (local)
-         |                              |
-         |                        OpenAI API (embeddings + LLM)
-         |                              |
-         |                       Answer returned to employee
-         |
-         |-- NOT_FOUND ---------> src/workflow/flow_b.py
-         |                              |
-         |                    src/core/jira_tools.py
-         |                              |
-         |                       Jira Cloud API
-         |                              |
-         |                       Ticket created — ID returned
-         |
-         |-- CHECK_STATUS ------> src/workflow/flow_c.py
-                                        |
-                               src/core/jira_tools.py
-                                        |
-                                  Jira Cloud API
-                                        |
-                                  Tickets retrieved and displayed
+Employee Input (Terminal / Web)
+         │
+         ▼
+   src/agents/agent.py
+   Intent Detection (GPT-4o-mini)
+         │
+         ├── KB_QUERY ──────────► src/workflow/flow_a.py
+         │                               │
+         │                        src/rag/rag_chain.py
+         │                               │
+         │                 src/rag/retrieval_with_threshold.py
+         │                               │
+         │                         chroma_db/  (local disk)
+         │                               │
+         │                        OpenAI API  (embeddings + LLM)
+         │                               │
+         │               Answer returned ◄── or NOT_FOUND ──┐
+         │                                                   │
+         ├── NOT_FOUND / TICKET ────────────────────────────►│
+         │                        src/workflow/flow_b.py     │
+         │                               │                   │
+         │                        src/core/jira_tools.py     │
+         │                               │                   │
+         │                        Jira Cloud API             │
+         │                               │                   │
+         │                   Ticket created — ID returned    │
+         │                                                   │
+         └── CHECK_STATUS ─────────────────────────────────►│
+                                  src/workflow/flow_c.py
+                                         │
+                                  src/core/jira_tools.py
+                                         │
+                                   Jira Cloud API
+                                         │
+                             Open tickets retrieved and displayed
 ```
 
 All secrets load from `.env` at runtime.
-ChromaDB runs locally on disk.
-OpenAI and Jira are the only external service dependencies.
+ChromaDB runs entirely on local disk — no external vector database required.
+OpenAI and Jira Cloud are the only external service dependencies.
+
+---
+
+## Running with Docker
+
+```bash
+# Build and run
+docker-compose up --build
+
+# Stop
+docker-compose down
+```
+
+The container mounts `./chroma_db` so the vector database persists between runs.
+Ensure your `.env` file is present in the project root before starting.
 
 ---
 
@@ -409,8 +430,9 @@ OpenAI and Jira are the only external service dependencies.
 | LLM | OpenAI GPT-4o-mini |
 | Embeddings | OpenAI text-embedding-3-small |
 | Vector Store | ChromaDB |
-| RAG Framework | LangChain |
+| RAG Framework | LangChain + LangGraph |
 | Ticketing | Jira Cloud REST API |
+| Web Interface | Streamlit (experimental) |
 | Secret Management | python-dotenv |
 | Testing | pytest |
 | Containerisation | Docker |
@@ -419,23 +441,28 @@ OpenAI and Jira are the only external service dependencies.
 
 ## Known Limitations
 
-- The agent runs as a command-line interface. The `web_app/` module
-  contains an experimental web interface that is not production ready.
-- Session memory does not persist between runs. Each new session
-  starts fresh with no memory of previous conversations.
-- The Jira integration requires an active internet connection.
-  If the API is unreachable the agent returns a polite error message
-  and suggests trying again.
-- Re-run `src/data/index_knowledge_base.py` any time documents
-  in `knowledge_base/` are added or updated.
+- **CLI first.** The primary interface is the terminal. The `web_app/` Streamlit
+  module is experimental and not production-ready.
+- **No session persistence.** Each new session starts fresh with no memory of
+  previous conversations.
+- **Internet required for Jira.** If the Jira API is unreachable the agent
+  returns a polite error and suggests trying again later.
+- **Re-index after KB changes.** Run `python src/data/index_knowledge_base.py`
+  any time documents in `knowledge_base/` are added or updated.
+- **Scope limited to knowledge base content.** Answers are grounded strictly in
+  indexed documents. Questions outside that scope are escalated to a ticket.
 
 ---
 
 ## Author
+
 Oscar — AI Generalist in Training
 First AI Capstone Project
-Interview Kickstart · Applied Agentic AI Program · Capstone Project
+Interview Kickstart · Applied Agentic AI Program
 GitHub: https://github.com/oscar2412/SmartDesk_AI
 
-## Disclaimer
-This tool is for educational purposes only and demonstrates the tip of the iceburg assistant for self service and assisted support. The demonstrated known answers are for this small controlled sample. Your real world experience will vary. Therefore, communicate with directly with the IT or HR department within your company for actual resolutions to your requests. Thank you
+---
+
+> **Disclaimer:** This project is for educational purposes and demonstrates a
+> self-service support assistant on a small, controlled knowledge base. For
+> actual IT or HR resolutions, contact your company's support team directly.
