@@ -110,7 +110,7 @@ CHECK_STATUS  - The employee specifically wants to check
                 "What is the status of my ticket?"
                 "Any updates on my issue?"
                 "Did IT respond to my request?"
-                "Check my ticket SSDAI-3"
+                "Check my ticket SSDAI-47"
                 "ticket status"
 
 UNCLEAR       - ONLY use this when the message is a pure

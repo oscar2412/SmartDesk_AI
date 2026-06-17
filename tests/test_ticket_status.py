@@ -79,9 +79,9 @@ else:
 print("-" * 60)
 print()
 
-print(f"TEST 4 — Look up specific ticket {PROJECT_KEY}-3 by ID")
+print(f"TEST 4 — Look up specific ticket {PROJECT_KEY}-47 by ID")
 print()
-result = get_ticket_by_id(f"{PROJECT_KEY}-3")
+result = get_ticket_by_id(f"{PROJECT_KEY}-47")
 print(f"  Status       : {result['status']}")
 print(f"  Ticket ID    : {result['ticket_id']}")
 print(f"  Summary      : {result['summary']}")
@@ -94,7 +94,7 @@ if result["status"] == TICKETS_FOUND:
     passed += 1
 else:
     print(f"  TEST 4   : FAIL ❌")
-    print(f"  Tip      : Check that {PROJECT_KEY}-3 exists in Jira")
+    print(f"  Tip      : Check that {PROJECT_KEY}-47 exists in Jira")
     failed += 1
 print("-" * 60)
 print()

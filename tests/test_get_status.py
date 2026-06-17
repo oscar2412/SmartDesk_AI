@@ -25,7 +25,8 @@ failed = 0
 
 print("TEST 1 — Look up tickets for email that HAS tickets")
 print()
-result = get_ticket_status("test.employee@roadmapconsulting.com")
+# result = get_ticket_status("test.employee@roadmapconsulting.com")
+result = get_ticket_status("demo@roadmapconsulting.com")
 print(f"  Status   : {result['status']}")
 print(f"  Count    : {result['count']}")
 print(f"  Reason   : {result['reason']}")
@@ -58,9 +59,9 @@ else:
 print("-" * 60)
 print()
 
-print(f"TEST 3 — Look up a specific ticket by ID ({PROJECT_KEY}-1)")
+print(f"TEST 3 — Look up a specific ticket by ID ({PROJECT_KEY}-47)")
 print()
-result = get_ticket_by_id(f"{PROJECT_KEY}-1")
+result = get_ticket_by_id(f"{PROJECT_KEY}-47")
 print(f"  Status       : {result['status']}")
 print(f"  Ticket ID    : {result['ticket_id']}")
 print(f"  Summary      : {result['summary']}")

@@ -111,14 +111,14 @@ SmartDesk_AI/
 │       ├── flow_b.py               # Ticket creation flow
 │       └── flow_c.py               # Ticket status check flow
 │
-├── tests/                          # 16 test files
-│   ├── test_flow_a.py
-│   ├── test_flow_b.py
-│   ├── test_flow_c.py
+├── tests/                          # 17 test files
 │   ├── test_confirmation.py
 │   ├── test_create_ticket.py
 │   ├── test_edge_cases.py
 │   ├── test_error_handling.py
+│   ├── test_flow_a.py
+│   ├── test_flow_b.py
+│   ├── test_flow_c.py
 │   ├── test_get_status.py
 │   ├── test_graceful_handling.py
 │   ├── test_jira_connection.py
@@ -127,7 +127,8 @@ SmartDesk_AI/
 │   ├── test_retrieval.py
 │   ├── test_security.py
 │   ├── test_threshold.py
-│   └── test_ticket_status.py
+│   ├── test_ticket_status.py
+│   └── test_upoise_checks.py       # Evaluator confidence rubric check
 │
 ├── docs/                           # Project documentation and diagrams
 │   ├── agent_design.md
@@ -143,8 +144,7 @@ SmartDesk_AI/
 ├── .gitignore
 ├── .dockerignore
 ├── config.yaml                     # RAG pipeline configuration
-├── conftest.py                     # pytest shared fixtures
-├── poise_check.py                  # Evaluator confidence rubric check
+├── conftest.py                     # pytest shared fixtures                
 ├── docker-compose.yml
 ├── Dockerfile
 └── requirements.txt
@@ -358,7 +358,7 @@ python poise_check.py
 | `test_security.py` | No hardcoded secrets scan |
 | `test_threshold.py` | Confidence threshold filtering |
 | `test_ticket_status.py` | Full status lookup scenarios |
-
+| `test_poise_checks.py`  | # Evaluator confidence rubric check | Only to run on-demand |
 ---
 
 ## Architecture
@@ -463,6 +463,7 @@ GitHub: https://github.com/oscar2412/SmartDesk_AI
 
 ---
 
-> **Disclaimer:** This project is for educational purposes and demonstrates a
-> self-service support assistant on a small, controlled knowledge base. For
-> actual IT or HR resolutions, contact your company's support team directly.
+> **Disclaimer:** This project is for educational and entertainmane purposes 
+> and demonstrates a self-service support assistant on a small, controlled 
+> knowledge base. For actual IT or HR resolutions, contact your company's 
+> support team directly.
