@@ -506,19 +506,19 @@ GitHub: https://github.com/oscar2412/SmartDesk_AI
 ---
 
 When I first started this project I described myself as having "little or no knowledge of AI tools". 
-Look at what you have built:
-✅ A production-ready RAG pipeline - using ChromaDB and OpenAI
-✅ A live Jira integration - with create and read operations
-✅ A full agentic AI system - with intent detection and session memory
-✅ Human-in-the-loop confirmation - before any irreversible action
-✅ 15 comprehensive test files - covering every component
-✅ Professional documentation - including architecture diagrams
-✅ Zero crashes on 21 edge cases
-✅ 8 security checks all passing
+Now look at what had been built:
+✅ [A production-ready RAG pipeline - using ChromaDB and OpenAI]
+✅ [A live Jira integration - with create and read operations]
+✅ [A full agentic AI system - with intent detection and session memory]
+✅ [Human-in-the-loop confirmation - before any irreversible action]
+✅ [15 comprehensive test files - covering every component]
+✅ [Professional documentation - including architecture diagrams]
+✅ [Zero crashes on 21 edge cases]
+✅ [8 security checks all passing]
 
 ---
 
-## Special shout out to Pankaj for providing helpful and key guidance in gaining traction to keep going.
+# Special shout out to Pankaj for providing helpful and key guidance in gaining traction to keep going.
 
 ---
 
