@@ -112,22 +112,22 @@ SmartDesk_AI/
 │       └── flow_c.py               # Ticket status check flow
 │
 ├── tests/                          # 17 test files
-│   ├── test_confirmation.py
-│   ├── test_create_ticket.py
-│   ├── test_edge_cases.py
-│   ├── test_error_handling.py
-│   ├── test_flow_a.py
-│   ├── test_flow_b.py
-│   ├── test_flow_c.py
-│   ├── test_get_status.py
-│   ├── test_graceful_handling.py
-│   ├── test_jira_connection.py
-│   ├── test_langgraph.py
-│   ├── test_rag_chain.py
-│   ├── test_retrieval.py
-│   ├── test_security.py
-│   ├── test_threshold.py
-│   ├── test_ticket_status.py
+│   ├── test_confirmation.py        # Human-in-the-Loop Confirmation Test
+│   ├── test_create_ticket.py       # Manual Ticket Creation Test
+│   ├── test_edge_cases.py          # Edge Case Testing
+│   ├── test_error_handling.py      # Error Handling Test Summary
+│   ├── test_flow_a.py              # Answers employee questions from a knowledge base
+│   ├── test_flow_b.py              # Creates Jira support tickets when it does not have an answer
+│   ├── test_flow_c.py              # Provides Jira ticket status by email address (key)
+│   ├── test_get_status.py          # Jira Ticket Status Comprehensive Test - by email (key)
+│   ├── test_graceful_handling.py   # Graceful Handling Test Summary
+│   ├── test_jira_connection.py     # Jira Live Connection Test
+│   ├── test_langgraph.py           # LangGraph Installation Test
+│   ├── test_rag_chain.py           # RAG Chain Comprehensive Test
+│   ├── test_retrieval.py           # Retrieval Pipeline Test
+│   ├── test_security.py            # Security Scan (no hard coded secrets)
+│   ├── test_threshold.py           # Confidence Threshold Test 
+│   ├── test_ticket_status.py       # Manual Ticket Status Lookup Test 
 │   └── test_upoise_checks.py       # Evaluator confidence rubric check
 │
 ├── docs/                           # Project documentation and diagrams
