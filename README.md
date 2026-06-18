@@ -111,7 +111,7 @@ SmartDesk_AI/
 │       ├── flow_b.py               # Ticket creation flow
 │       └── flow_c.py               # Ticket status check flow
 │
-├── tests/                          # 17 test files & 1 a final file
+├── tests/                          # 18 test files
 │   ├── test_confirmation.py        # Human-in-the-Loop Confirmation Test
 │   ├── test_create_ticket.py       # Manual Ticket Creation Test
 │   ├── test_edge_cases.py          # Edge Case Testing
@@ -132,16 +132,17 @@ SmartDesk_AI/
 │   └── final_checklist.py          # Verifies every required file exists in the project
 │
 ├── docs/                           # Project documentation and diagrams
-│   ├── agent_design.md
-│   ├── agent_flowchart.jpg
-│   ├── agent_flowchart.md
-│   ├── agent_flowchart.png
-│   ├── architecture_diagram.png
-│   ├── architecture.md
-│   ├── jira_test_screenshot.png
-│   ├── self_assessment.md
-│   └── SmartDesk_AI_Project_Plan.pdf
+│   ├── agent_design.md             # Agent design notes and decision log
+│   ├── agent_flowchart.md          # Flowchart description (text)
+│   ├── agent_flowchart.jpg         # Agent routing diagram (JPG)
+│   ├── agent_flowchart.png         # Agent routing diagram (PNG)
+│   ├── architecture.md             # Extended architecture detail
+│   ├── architecture_diagram.png    # Full system architecture diagram
+│   ├── jira_test_screenshot.png    # Jira ticket creation screenshot
+│   ├── self_assessment.md          # Evaluator rubric self-assessment (100/100)
+│   └── SmartDesk_AI_Project_Plan.pdf  # Original project plan
 │
+├── architecture.md                 # Chunking strategy + RAG pipeline overview
 ├── chroma_db/                      # Vector database (auto-generated, git-ignored)
 ├── .env                            # Secret keys — never commit this file
 ├── .env.example                    # Environment variable template
@@ -246,9 +247,11 @@ To create a Jira API token, visit:
 | `chunk_size` | `800` | Characters per document chunk |
 | `chunk_overlap` | `150` | Overlap between adjacent chunks |
 | `top_k_results` | `3` | Number of chunks retrieved per query |
-| `confidence_threshold` | `0.15` | Minimum score to return an answer |
+| `confidence_threshold` | `0.15` | Minimum similarity score to return an answer |
 | `embedding_model` | `text-embedding-3-small` | OpenAI embedding model |
 | `llm_model` | `gpt-4o-mini` | OpenAI chat model |
+
+See `architecture.md` at the project root for the full chunking strategy rationale.
 
 ---
 
@@ -292,8 +295,8 @@ SmartDesk  : Please review the ticket I will create:
 You        : yes
 
 SmartDesk  : Your support ticket has been created successfully.
-               Ticket ID : SSDAI-12
-               URL       : https://oe7051.atlassian.net/browse/SSDAI-12
+               Ticket ID : SSDAI-47
+               URL       : https://oe7051.atlassian.net/browse/SSDAI-47
              The support team will get back to you shortly.
 ```
 
@@ -308,11 +311,11 @@ You        : jane@roadmapconsulting.com
 
 SmartDesk  : I found 2 ticket(s) for jane@roadmapconsulting.com:
 
-             SSDAI-12 : My monitor keeps flickering
+             SSDAI-47 : My monitor keeps flickering
                Status  : In Progress
                Update  : Replacement monitor ordered.
 
-             SSDAI-8  : Printer jam on floor 3
+             SSDAI-48 : Printer jam on floor 3
                Status  : Done
 
              Is there anything else I can help you with?
@@ -336,10 +339,17 @@ pytest tests/test_flow_b.py -v
 pytest tests/test_flow_c.py -v
 ```
 
-**Run the evaluator confidence check:**
+**Run the evaluator rubric confidence check:**
 
 ```bash
-python poise_check.py
+$env:PYTHONIOENCODING="utf-8"          # Windows PowerShell — required for Unicode output
+python tests/test_upoise_checks.py
+```
+
+**Run the pre-submission checklist:**
+
+```bash
+python tests/final_checklist.py
 ```
 
 **Test file reference:**
@@ -361,8 +371,14 @@ python poise_check.py
 | `test_retrieval.py` | ChromaDB retrieval pipeline |
 | `test_security.py` | No hardcoded secrets scan |
 | `test_threshold.py` | Confidence threshold filtering |
-| `test_ticket_status.py` | Full status lookup scenarios |
-| `test_poise_checks.py`  | # Evaluator confidence rubric check | Only to run on-demand |
+| `test_ticket_status.py` | Manual ticket status lookup (all scenarios) |
+| `test_upoise_checks.py` | Evaluator rubric confidence checker (run on-demand) |
+| `final_checklist.py` | Pre-submission checklist |
+
+> **Note:** Jira tests require valid credentials in `.env` and an active Jira Cloud
+> connection. Tests reference ticket `SSDAI-47` — the first real ticket in the project.
+> IDs below SSDAI-47 do not exist and will return 404 from the Jira API.
+
 ---
 
 ## Architecture
@@ -409,6 +425,9 @@ All secrets load from `.env` at runtime.
 ChromaDB runs entirely on local disk — no external vector database required.
 OpenAI and Jira Cloud are the only external service dependencies.
 
+See `docs/architecture_diagram.png` for the visual diagram and `architecture.md` for
+the full chunking strategy and RAG pipeline design decisions.
+
 ---
 
 ## Running with Docker
@@ -435,7 +454,7 @@ Ensure your `.env` file is present in the project root before starting.
 | Embeddings | OpenAI text-embedding-3-small |
 | Vector Store | ChromaDB |
 | RAG Framework | LangChain + LangGraph |
-| Ticketing | Jira Cloud REST API |
+| Ticketing | Jira Cloud REST API (`jira` library) |
 | Web Interface | Streamlit (experimental) |
 | Secret Management | python-dotenv |
 | Testing | pytest |
@@ -455,13 +474,32 @@ Ensure your `.env` file is present in the project root before starting.
   any time documents in `knowledge_base/` are added or updated.
 - **Scope limited to knowledge base content.** Answers are grounded strictly in
   indexed documents. Questions outside that scope are escalated to a ticket.
+- **Jira ticket IDs start at SSDAI-47.** IDs below that do not exist in the
+  project and will return a 404 from the Jira API.
+
+---
+
+## Documentation
+
+| File | Contents |
+| --- | --- |
+| `architecture.md` | Chunking strategy, RAG config rationale, pipeline overview |
+| `docs/architecture.md` | Extended architecture detail |
+| `docs/architecture_diagram.png` | Full system architecture diagram |
+| `docs/agent_design.md` | Agent design notes and decision log |
+| `docs/agent_flowchart.md` | Flowchart description (text) |
+| `docs/agent_flowchart.png` | Agent routing diagram |
+| `docs/self_assessment.md` | Evaluator rubric self-assessment (100/100) |
+| `docs/SmartDesk_AI_Project_Plan.pdf` | Original project plan |
 
 ---
 
 ## Author
 
 Oscar — AI Generalist in Training
-First AI Capstone Project
+First AI Capstone Project. In order to prepare this project I needed to have training using GitHub, VS Code, Python, Docker, Claude.
+  Then become sufficiently proficient because of challenges and manage these tools to meet the project requirements.
+  And, it's exactly what I was looking to do.
 Interview Kickstart · Applied Agentic AI Program
 GitHub: https://github.com/oscar2412/SmartDesk_AI
 
