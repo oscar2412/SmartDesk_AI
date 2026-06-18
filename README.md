@@ -111,7 +111,7 @@ SmartDesk_AI/
 │       ├── flow_b.py               # Ticket creation flow
 │       └── flow_c.py               # Ticket status check flow
 │
-├── tests/                          # 17 test files
+├── tests/                          # 17 test files & 1 a final file
 │   ├── test_confirmation.py        # Human-in-the-Loop Confirmation Test
 │   ├── test_create_ticket.py       # Manual Ticket Creation Test
 │   ├── test_edge_cases.py          # Edge Case Testing
@@ -128,15 +128,19 @@ SmartDesk_AI/
 │   ├── test_security.py            # Security Scan (no hard coded secrets)
 │   ├── test_threshold.py           # Confidence Threshold Test 
 │   ├── test_ticket_status.py       # Manual Ticket Status Lookup Test 
-│   └── test_upoise_checks.py       # Evaluator confidence rubric check
+│   ├── test_upoise_checks.py       # Evaluator confidence rubric check
+│   └── final_checklist.py          # Verifies every required file exists in the project
 │
 ├── docs/                           # Project documentation and diagrams
 │   ├── agent_design.md
+│   ├── agent_flowchart.jpg
 │   ├── agent_flowchart.md
 │   ├── agent_flowchart.png
-│   ├── agent_flowchart.jpg
+│   ├── architecture_diagram.png
 │   ├── architecture.md
-│   └── architecture_diagram.drawio.png
+│   ├── jira_test_screenshot.png
+│   ├── self_assessment.md
+│   └── SmartDesk_AI_Project_Plan.pdf
 │
 ├── chroma_db/                      # Vector database (auto-generated, git-ignored)
 ├── .env                            # Secret keys — never commit this file
