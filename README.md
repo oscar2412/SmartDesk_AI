@@ -505,7 +505,7 @@ GitHub: https://github.com/oscar2412/SmartDesk_AI
 
 ---
 
-> **Disclaimer:** This project is for educational and entertainmane purposes 
-> and demonstrates a self-service support assistant on a small, controlled 
-> knowledge base. For actual IT or HR resolutions, contact your company's 
-> support team directly.
+> **Disclaimer:** This project is for entertainment and educational purposes 
+> to demonstrate a self-service support assistant on a small, controlled 
+> knowledge base. 
+> For actual IT or HR resolutions, contact your company's support team directly.
