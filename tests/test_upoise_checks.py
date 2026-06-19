@@ -67,10 +67,10 @@ PATHS = {
     # Documentation files
     "readme"          : "README.md",
     "self_assess"     : "self_assessment.md",
-    "arch_diagram"    : "docs/architecture_diagram.drawio.png",
-    "arch_md"         : "architecture.md",
-    "agent_design"    : "agent_design.md",
-    "agent_flowchart" : "docs/agent_flowchart.png",
+    "arch_diagram"    : "docs/02_architecture_diagram.png",
+    "arch_md"         : "docs/01_architecture.md",
+    "agent_design"    : "docs/03_agent_design.md",
+    "agent_flowchart" : "docs/05_agent_flowchart_19.png",
     "requirements"    : "requirements.txt",
     "env_example"     : ".env.example",
     "gitignore"       : ".gitignore",
@@ -477,7 +477,7 @@ e_score += check("architecture_diagram exists",
     "Export diagram from draw.io as PNG")
 e_score += check("agent_flowchart.png exists",
     exists("agent_flowchart"), 1)
-e_score += check("architecture.md documentation",
+e_score += check("docs/03_architecture.md documentation",
     exists("arch_md"), 1)
 e_score += check("Docker/deployment config present",
     os.path.exists("Dockerfile") or

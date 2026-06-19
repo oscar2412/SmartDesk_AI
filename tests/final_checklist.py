@@ -109,19 +109,19 @@ check("self_assessment.md exists",
       fix="Create self_assessment.md with rubric scores")
 
 check("architecture_diagram.png exists",
-      os.path.exists("docs/architecture_diagram.png"),
+      os.path.exists("docs/02_architecture_diagram.png"),
       fix="Export architecture diagram from draw.io as PNG")
 
 check("agent_flowchart.png exists",
-      os.path.exists("docs/agent_flowchart.png"),
+      os.path.exists("docs/05_agent_flowchart_19.png"),
       fix="Export agent flowchart from draw.io as PNG")
 
 check("agent_design.md exists",
-      os.path.exists("docs/agent_design.md"),
+      os.path.exists("docs/03_agent_design.md"),
       critical=False)
 
 check("architecture.md exists",
-      os.path.exists("architecture.md"),
+      os.path.exists("docs/01_architecture.md"),
       critical=False)
 
 print()
