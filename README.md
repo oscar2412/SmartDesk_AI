@@ -82,14 +82,26 @@ and displays their current status and latest comments.
 ```
 SmartDesk_AI/
 │
-├── src/                            # All application source code
+├── chroma_db/                      # Vector database (auto-generated, git-ignored)
+│
+├── docs/                                 # Project documentation, architecture, and diagrams
+│   ├── 00_SmartDesk_AI_Project_Plan.pdf  # Original project plan
+│   ├── 01_architecture.md                # Extended architecture detail
+│   ├── 02_architecture_diagram.png       # Full system architecture diagram
+│   ├── 03_agent_design.md                # Agent design notes and decision log
+│   ├── 04_agent_flowchart.md             # Flowchart description (text)
+│   ├── 05_agent_flowchart_19.png         # Agent routing diagram (PNG)
+│   ├── jira_test_screenshot.png          # Jira ticket creation screenshot
+│   └── self_assessment.md                # Evaluator rubric self-assessment (100/100)
+│
+├── src/                                  # All application source code
 │   ├── agents/
-│   │   └── agent.py                # Main orchestrator — intent detection,
-│   │                               # session management, message routing
+│   │   └── agent.py                      # Main orchestrator — intent detection,
+│   │                                     # session management, message routing
 │   ├── core/
-│   │   └── jira_tools.py           # Jira Cloud REST API integration
+│   │   └── jira_tools.py                 # Jira Cloud REST API integration
 │   ├── data/
-│   │   ├── index_knowledge_base.py # Indexes KB documents into ChromaDB
+│   │   ├── index_knowledge_base.py       # Indexes KB documents into ChromaDB
 │   │   └── knowledge_base/
 │   │       ├── it_support_guide.md
 │   │       ├── hr_leave_policy.md
@@ -98,18 +110,18 @@ SmartDesk_AI/
 │   │       ├── hr-policies-qa-dataset.jsonl
 │   │       └── out_of_scope_topics.txt
 │   ├── rag/
-│   │   ├── rag_chain.py            # RAG answer generation via LangChain
-│   │   ├── rag_config.py           # Centralised RAG settings
-│   │   └── retrieval_with_threshold.py  # ChromaDB retrieval + confidence filter
+│   │   ├── rag_chain.py                  # RAG answer generation via LangChain
+│   │   ├── rag_config.py                 # Centralised RAG settings
+│   │   └── retrieval_with_threshold.py   # ChromaDB retrieval + confidence filter
 │   ├── utils/
-│   │   ├── helpers.py              # Validation, greeting builders, formatters
+│   │   ├── helpers.py                    # Validation, greeting builders, formatters
 │   │   └── company_profile.txt
 │   ├── web_app/
-│   │   └── app.py                  # Experimental Streamlit web interface
+│   │   └── app.py                        # Experimental Streamlit web interface
 │   └── workflow/
-│       ├── flow_a.py               # Knowledge base query flow
-│       ├── flow_b.py               # Ticket creation flow
-│       └── flow_c.py               # Ticket status check flow
+│       ├── flow_a.py                     # Knowledge base query flow
+│       ├── flow_b.py                     # Ticket creation flow
+│       └── flow_c.py                     # Ticket status check flow
 │
 ├── tests/                          # 18 test files
 │   ├── test_confirmation.py        # Human-in-the-Loop Confirmation Test
@@ -131,19 +143,8 @@ SmartDesk_AI/
 │   ├── test_upoise_checks.py       # Evaluator confidence rubric check
 │   └── final_checklist.py          # Verifies every required file exists in the project
 │
-├── docs/                           # Project documentation and diagrams
-│   ├── agent_design.md             # Agent design notes and decision log
-│   ├── agent_flowchart.md          # Flowchart description (text)
-│   ├── agent_flowchart.jpg         # Agent routing diagram (JPG)
-│   ├── agent_flowchart.png         # Agent routing diagram (PNG)
-│   ├── architecture.md             # Extended architecture detail
-│   ├── architecture_diagram.png    # Full system architecture diagram
-│   ├── jira_test_screenshot.png    # Jira ticket creation screenshot
-│   ├── self_assessment.md          # Evaluator rubric self-assessment (100/100)
-│   └── SmartDesk_AI_Project_Plan.pdf  # Original project plan
-│
-├── architecture.md                 # Chunking strategy + RAG pipeline overview
-├── chroma_db/                      # Vector database (auto-generated, git-ignored)
+
+
 ├── .env                            # Secret keys — never commit this file
 ├── .env.example                    # Environment variable template
 ├── .gitignore
